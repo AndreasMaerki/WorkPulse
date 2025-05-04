@@ -24,4 +24,11 @@ class Clock: Identifiable, Equatable {
     self.name = name
     self.color = color
   }
+
+  func elapsedTime() -> TimeInterval {
+    timeSegments.reduce(0) { result, timeSegment in
+      result + timeSegment.elapsedTime(refTime: Date())
+    }
+  }
 }
+

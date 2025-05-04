@@ -18,6 +18,13 @@ struct ContentView: View {
   var body: some View {
     NavigationSplitView {
       List {
+        Section(header: Text("Dashboard")) {
+          NavigationLink {
+            DashboardView()
+          } label: {
+            Text("Dashboard")
+          }
+        }
         Section(header: Text("Clocks")) {
           // maybe pass indices to maintain bindble?
           ForEach(globalModel.clocks) { clock in
@@ -49,23 +56,32 @@ struct ContentView: View {
     }
   }
 
-  private func sideBarClock(_ clock: Clock) -> LabeledContent<some View, some View> {
-    return LabeledContent {
-      Image(systemName: "hourglass")
-        .font(.title2)
-        .padding(.horizontal, 4)
+  private func sideBarClock(_ clock: Clock) -> some View {
+    Button {
+      if globalModel.activeClock?.id == clock.id {
+        globalModel.stopTimer()
+      } else {
+        globalModel.startTimer(clock)
+      }
     } label: {
-      HStack {
-        Text("00:00")
-          .foregroundStyle(.white)
-          .padding(6)
-          .background(
-            RoundedRectangle(cornerRadius: 4)
-              .fill(clock.color)
-          )
-        Text(clock.name)
+      LabeledContent {
+        Image(systemName: "hourglass")
+          .font(.title2)
+          .padding(.horizontal, 4)
+      } label: {
+        HStack {
+          Text(globalModel.currentTimeForClock(clock).formattedHHMMSS())
+            .foregroundStyle(.white)
+            .padding(6)
+            .background(
+              RoundedRectangle(cornerRadius: 4)
+                .fill(clock.color)
+            )
+          Text(clock.name)
+        }
       }
     }
+    .buttonStyle(.plain)
   }
 
   var settings: some View {
