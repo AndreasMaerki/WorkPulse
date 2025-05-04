@@ -8,20 +8,49 @@
 import Observation
 import Foundation
 import SwiftUICore
-
+import SwiftData
+import _SwiftData_SwiftUI
 
 @Observable
 class GlobalEnvironment {
-  var clocks: [Clock] = [
-    .init(name: "Work", color: .blue),
-    .init(name: "Personal", color: .red),
-    .init(name: "Travel", color: .green),
-  ]
-
+  var clocks: [Clock] = []
   var activeClock: Clock? = nil
   private var timer: Timer?
-
   var elapsedTime: TimeInterval = 0
+  private var modelContext: ModelContext?
+
+  init(modelContext: ModelContext? = nil) {
+    self.modelContext = modelContext
+    loadClocks()
+  }
+
+  private func loadClocks() {
+    guard let modelContext = modelContext else { return }
+    
+    do {
+      let descriptor = FetchDescriptor<Clock>()
+      let persistedClocks = try modelContext.fetch(descriptor)
+      
+      if !persistedClocks.isEmpty {
+        clocks = persistedClocks
+      } else {
+        // Create default clocks if no persisted data exists
+        let defaultClocks = [
+          Clock(name: "Work", color: .blue),
+          Clock(name: "Personal", color: .red),
+          Clock(name: "Travel", color: .green),
+        ]
+        
+        // Insert default clocks into the model context
+        for clock in defaultClocks {
+          modelContext.insert(clock)
+        }
+        clocks = defaultClocks
+      }
+    } catch {
+      print("Error fetching clocks: \(error)")
+    }
+  }
 
   func startTimer(_ clock: Clock) {
     // Stop any existing timer first
@@ -31,6 +60,7 @@ class GlobalEnvironment {
       startTime: Date(), assignedClock: clock.id
     )
     clock.timeSegments.append(newTimeSegment)
+    modelContext?.insert(newTimeSegment)
     activeClock = clock
     
     // Start new timer
@@ -40,9 +70,8 @@ class GlobalEnvironment {
   }
 
   func stopTimer() {
-    if let activeClock, let index = clocks.firstIndex(where: { $0.id == activeClock.id }) {
+    if let activeClock {
       activeClock.updateLastSegmentEndTime()
-      clocks[index] = activeClock
     }
     activeClock = nil
     
@@ -52,6 +81,7 @@ class GlobalEnvironment {
 
   func addClock(_ name: String, _ color: Color) {
     let clock = Clock(name: name, color: color)
+    modelContext?.insert(clock)
     clocks.append(clock)
   }
 
@@ -63,9 +93,8 @@ class GlobalEnvironment {
   }
 
   private func updateTime() {
-    if let activeClock, let index = clocks.firstIndex(where: { $0.id == activeClock.id }) {
+    if let activeClock {
       activeClock.updateLastSegmentEndTime()
-      clocks[index] = activeClock
     }
   }
 

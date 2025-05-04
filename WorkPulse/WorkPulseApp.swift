@@ -12,7 +12,9 @@ import SwiftData
 struct WorkPulseApp: App {
   var sharedModelContainer: ModelContainer = {
     let schema = Schema([
-      Item.self,
+      Clock.self,
+      TimeSegment.self,
+      ColorComponents.self
     ])
     let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -23,7 +25,12 @@ struct WorkPulseApp: App {
     }
   }()
 
-  @State var globalEnvironment =  GlobalEnvironment()
+  @State var globalEnvironment: GlobalEnvironment
+
+  init() {
+    let context = sharedModelContainer.mainContext
+    _globalEnvironment = State(initialValue: GlobalEnvironment(modelContext: context))
+  }
 
   var body: some Scene {
     WindowGroup {

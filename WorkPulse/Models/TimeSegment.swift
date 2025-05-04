@@ -7,11 +7,13 @@
 
 import Foundation
 import SwiftUICore
+import SwiftData
 
-class TimeSegment: Identifiable {
-  let id: UUID
+@Model
+final class TimeSegment {
+  var id: UUID
   var startTime: Date
-  var endTime: Date? = nil
+  var endTime: Date?
   var assignedClock: UUID
 
   init(id: UUID = UUID(), startTime: Date, endTime: Date? = nil, assignedClock: UUID) {

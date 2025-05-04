@@ -8,21 +8,62 @@
 
 import Foundation
 import SwiftUICore
+import SwiftData
+import AppKit
 
-class Clock: Identifiable, Equatable {
-  static func == (lhs: Clock, rhs: Clock) -> Bool {
-    true
+@Model
+final class ColorComponents {
+  var red: Double
+  var green: Double
+  var blue: Double
+  var opacity: Double
+
+  init(red: Double, green: Double, blue: Double, opacity: Double) {
+    self.red = red
+    self.green = green
+    self.blue = blue
+    self.opacity = opacity
   }
+}
 
-  let id: UUID
+@Model
+final class Clock {
+  var id: UUID
   var name: String
-  var color: Color
-  var timeSegments: [TimeSegment] = []
+  @Relationship var colorComponents: ColorComponents
+  @Relationship(deleteRule: .cascade) var timeSegments: [TimeSegment] = []
+
+  var color: Color {
+    get {
+      Color(.sRGB,
+            red: colorComponents.red,
+            green: colorComponents.green,
+            blue: colorComponents.blue,
+            opacity: colorComponents.opacity)
+    }
+    set {
+      if let components = newValue.components {
+        colorComponents.red = components.red
+        colorComponents.green = components.green
+        colorComponents.blue = components.blue
+        colorComponents.opacity = components.opacity
+      }
+    }
+  }
 
   init(id: UUID = UUID(), name: String, color: Color) {
     self.id = id
     self.name = name
-    self.color = color
+    if let components = color.components {
+      self.colorComponents = ColorComponents(
+        red: components.red,
+        green: components.green,
+        blue: components.blue,
+        opacity: components.opacity
+      )
+    } else {
+      self.colorComponents = ColorComponents(red: 1, green: 1, blue: 1, opacity: 1)
+    }
   }
 
   func elapsedTime() -> TimeInterval {
