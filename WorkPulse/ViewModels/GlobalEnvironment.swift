@@ -50,24 +50,23 @@ class GlobalEnvironment {
     timer = nil
   }
 
-  private func updateTime() {
-    if let activeClock, let index = clocks.firstIndex(where: { $0.id == activeClock.id }) {
-      activeClock.updateLastSegmentEndTime()
-      clocks[index] = activeClock
-    }
-  }
-
   func addClock(_ name: String, _ color: Color) {
     let clock = Clock(name: name, color: color)
     clocks.append(clock)
   }
 
   func updateTotalTime() {
+    updateTime()
     elapsedTime = clocks.reduce(0) { result, clock in
       result + clock.elapsedTime()
     }
+  }
 
-    updateTime()
+  private func updateTime() {
+    if let activeClock, let index = clocks.firstIndex(where: { $0.id == activeClock.id }) {
+      activeClock.updateLastSegmentEndTime()
+      clocks[index] = activeClock
+    }
   }
 
   func totalTimeForName(_ name: String) -> TimeInterval {

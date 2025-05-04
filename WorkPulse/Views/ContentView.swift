@@ -58,24 +58,22 @@ struct ContentView: View {
 
   private func sideBarClock(_ clock: Clock) -> some View {
     Button {
-      if globalModel.activeClock?.id == clock.id {
-        globalModel.stopTimer()
-      } else {
-        globalModel.startTimer(clock)
-      }
+      toggleClock(clock)
     } label: {
       LabeledContent {
         Image(systemName: "hourglass")
           .font(.title2)
           .padding(.horizontal, 4)
+          .foregroundStyle(clock.color)
       } label: {
         HStack {
           Text(clock.elapsedTime().formattedHHMMSS())
+            .monospaced(true)
             .foregroundStyle(.white)
             .padding(6)
             .background(
               RoundedRectangle(cornerRadius: 4)
-                .fill(clock.color)
+                .fill(globalModel.activeClock?.id == clock.id ? clock.color : .clear)
             )
           Text(clock.name)
         }
@@ -92,6 +90,13 @@ struct ContentView: View {
     }
   }
 
+  private func toggleClock(_ clock: Clock) {
+    if globalModel.activeClock?.id == clock.id {
+      globalModel.stopTimer()
+    } else {
+      globalModel.startTimer(clock)
+    }
+  }
   private func addItem() {
     showSheet.toggle()
 //    withAnimation {
