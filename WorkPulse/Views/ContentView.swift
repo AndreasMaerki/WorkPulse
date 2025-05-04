@@ -70,7 +70,7 @@ struct ContentView: View {
           .padding(.horizontal, 4)
       } label: {
         HStack {
-          Text(globalModel.currentTimeForClock(clock).formattedHHMMSS())
+          Text(clock.elapsedTime().formattedHHMMSS())
             .foregroundStyle(.white)
             .padding(6)
             .background(

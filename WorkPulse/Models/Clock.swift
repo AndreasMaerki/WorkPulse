@@ -30,5 +30,10 @@ class Clock: Identifiable, Equatable {
       result + timeSegment.elapsedTime(refTime: Date())
     }
   }
+
+  func updateLastSegmentEndTime() {
+    guard !timeSegments.isEmpty else { return }
+    timeSegments.last!.endTime = Date()
+  }
 }
 

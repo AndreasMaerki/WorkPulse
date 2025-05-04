@@ -11,7 +11,7 @@ import SwiftUICore
 
 
 @Observable
-class GlobalEnvironment: ObservableObject {
+class GlobalEnvironment {
   var clocks: [Clock] = [
     .init(name: "Work", color: .blue),
     .init(name: "Personal", color: .red),
@@ -41,14 +41,20 @@ class GlobalEnvironment: ObservableObject {
 
   func stopTimer() {
     if let activeClock, let index = clocks.firstIndex(where: { $0.id == activeClock.id }) {
-      activeClock.timeSegments.last?.endTime = Date()
+      activeClock.updateLastSegmentEndTime()
       clocks[index] = activeClock
     }
     activeClock = nil
     
-    // Invalidate and cleanup timer
     timer?.invalidate()
     timer = nil
+  }
+
+  private func updateTime() {
+    if let activeClock, let index = clocks.firstIndex(where: { $0.id == activeClock.id }) {
+      activeClock.updateLastSegmentEndTime()
+      clocks[index] = activeClock
+    }
   }
 
   func addClock(_ name: String, _ color: Color) {
@@ -60,6 +66,8 @@ class GlobalEnvironment: ObservableObject {
     elapsedTime = clocks.reduce(0) { result, clock in
       result + clock.elapsedTime()
     }
+
+    updateTime()
   }
 
   func totalTimeForName(_ name: String) -> TimeInterval {
