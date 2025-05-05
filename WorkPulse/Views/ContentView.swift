@@ -26,17 +26,22 @@ struct ContentView: View {
           }
         }
         Section(header: Text("Clocks")) {
-          // maybe pass indices to maintain bindble?
           ForEach(globalModel.clocks) { clock in
-            sideBarClock(clock)
-              .background(Color.secondary.opacity(0.1).cornerRadius(4))
+            ClockRowView(clock: clock)
+              .swipeActions(edge: .trailing) {
+                Button(role: .destructive) {
+                  globalModel.deleteClock(clock)
+                } label: {
+                  Label("Delete", systemImage: "trash")
+                }
+              }
           }
         }
         Section(header: Text("More")) {
-        NavigationLink {
-          Text("Settings")
-        } label: {
-          settings
+          NavigationLink {
+            Text("Settings")
+          } label: {
+            settings
           }
         }
       }
@@ -56,9 +61,34 @@ struct ContentView: View {
     }
   }
 
-  private func sideBarClock(_ clock: Clock) -> some View {
+  var settings: some View {
+    LabeledContent {
+      Image(systemName: "gear")
+    } label: {
+      Text("Settings")
+    }
+  }
+
+  private func addItem() {
+    showSheet.toggle()
+  }
+
+  private func deleteItems(offsets: IndexSet) {
+    withAnimation {
+      for index in offsets {
+        modelContext.delete(items[index])
+      }
+    }
+  }
+}
+
+struct ClockRowView: View {
+  @Environment(GlobalEnvironment.self) private var globalModel
+  let clock: Clock
+
+  var body: some View {
     Button {
-      toggleClock(clock)
+      toggleClock()
     } label: {
       LabeledContent {
         Image(systemName: "hourglass")
@@ -80,36 +110,14 @@ struct ContentView: View {
       }
     }
     .buttonStyle(.plain)
+    .background(Color.secondary.opacity(0.1).cornerRadius(4))
   }
 
-  var settings: some View {
-    LabeledContent {
-      Image(systemName: "gear")
-    } label: {
-      Text("Settings")
-    }
-  }
-
-  private func toggleClock(_ clock: Clock) {
+  private func toggleClock() {
     if globalModel.activeClock?.id == clock.id {
       globalModel.stopTimer()
     } else {
       globalModel.startTimer(clock)
-    }
-  }
-  private func addItem() {
-    showSheet.toggle()
-//    withAnimation {
-//      let newItem = Item(timestamp: Date())
-//      modelContext.insert(newItem)
-//    }
-  }
-
-  private func deleteItems(offsets: IndexSet) {
-    withAnimation {
-      for index in offsets {
-        modelContext.delete(items[index])
-      }
     }
   }
 }

@@ -29,35 +29,19 @@ class GlobalEnvironment {
     
     do {
       let descriptor = FetchDescriptor<Clock>()
-      let persistedClocks = try modelContext.fetch(descriptor)
-      
-      if !persistedClocks.isEmpty {
-        clocks = persistedClocks
-      } else {
-        // Create default clocks if no persisted data exists
-        let defaultClocks = [
-          Clock(name: "Work", color: .blue),
-          Clock(name: "Personal", color: .red),
-          Clock(name: "Travel", color: .green),
-        ]
-        
-        // Insert default clocks into the model context
-        for clock in defaultClocks {
-          modelContext.insert(clock)
-        }
-        clocks = defaultClocks
-      }
+      clocks = try modelContext.fetch(descriptor)
+      updateTotalTime() // Initialize total time
     } catch {
       print("Error fetching clocks: \(error)")
     }
   }
 
   func startTimer(_ clock: Clock) {
-    // Stop any existing timer first
     stopTimer()
     
     let newTimeSegment = TimeSegment(
-      startTime: Date(), assignedClock: clock.id
+      startTime: Date(),
+      clock: clock
     )
     clock.timeSegments.append(newTimeSegment)
     modelContext?.insert(newTimeSegment)
@@ -74,15 +58,28 @@ class GlobalEnvironment {
       activeClock.updateLastSegmentEndTime()
     }
     activeClock = nil
-    
     timer?.invalidate()
     timer = nil
+    try? modelContext?.save()
+    updateTotalTime() // Update total time after stopping
   }
 
   func addClock(_ name: String, _ color: Color) {
     let clock = Clock(name: name, color: color)
     modelContext?.insert(clock)
     clocks.append(clock)
+  }
+
+  func deleteClock(_ clock: Clock) {
+    if activeClock?.id == clock.id {
+      stopTimer()
+    }
+    modelContext?.delete(clock)
+    if let index = clocks.firstIndex(where: { $0.id == clock.id }) {
+      clocks.remove(at: index)
+    }
+    try? modelContext?.save()
+    updateTotalTime()
   }
 
   func updateTotalTime() {
@@ -100,16 +97,6 @@ class GlobalEnvironment {
 
   func totalTimeForName(_ name: String) -> TimeInterval {
     return clocks.first(where: { $0.name == name })?.elapsedTime() ?? 0
-  }
-
-  func currentTimeForClock(_ clock: Clock) -> TimeInterval {
-    if clock.id == activeClock?.id {
-      // For active clock, include the current running segment
-      return clock.elapsedTime()
-    } else {
-      // For inactive clocks, just return the total elapsed time
-      return clock.elapsedTime()
-    }
   }
 
   deinit {

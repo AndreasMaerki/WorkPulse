@@ -31,7 +31,7 @@ final class Clock {
   var id: UUID
   var name: String
   @Relationship var colorComponents: ColorComponents
-  @Relationship(deleteRule: .cascade) var timeSegments: [TimeSegment] = []
+  @Relationship(deleteRule: .cascade, inverse: \TimeSegment.clock) var timeSegments: [TimeSegment] = []
 
   var color: Color {
     get {
@@ -77,4 +77,3 @@ final class Clock {
     timeSegments.last!.endTime = Date()
   }
 }
-

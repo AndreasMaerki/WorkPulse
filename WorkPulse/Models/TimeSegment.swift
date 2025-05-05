@@ -14,13 +14,13 @@ final class TimeSegment {
   var id: UUID
   var startTime: Date
   var endTime: Date?
-  var assignedClock: UUID
+  @Relationship var clock: Clock?
 
-  init(id: UUID = UUID(), startTime: Date, endTime: Date? = nil, assignedClock: UUID) {
+  init(id: UUID = UUID(), startTime: Date, endTime: Date? = nil, clock: Clock? = nil) {
     self.id = id
     self.startTime = startTime
     self.endTime = endTime
-    self.assignedClock = assignedClock
+    self.clock = clock
   }
 
   func elapsedTime(refTime: Date) -> TimeInterval {
