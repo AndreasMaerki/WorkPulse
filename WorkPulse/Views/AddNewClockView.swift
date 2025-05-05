@@ -1,10 +1,3 @@
-//
-//  AddNewClockView.swift
-//  WorkPulse
-//
-//  Created by Andreas Maerki on 04.05.2025.
-//
-
 import SwiftUI
 
 struct AddNewClockView: View {

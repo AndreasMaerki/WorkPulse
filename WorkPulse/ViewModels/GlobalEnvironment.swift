@@ -1,20 +1,13 @@
-//
-//  GlobalEnvironment.swift
-//  WorkPulse
-//
-//  Created by Andreas Maerki on 04.05.2025.
-//
-
-import Observation
-import Foundation
-import SwiftUICore
-import SwiftData
 import _SwiftData_SwiftUI
+import Foundation
+import Observation
+import SwiftData
+import SwiftUICore
 
 @Observable
 class GlobalEnvironment {
   var clocks: [Clock] = []
-  var activeClock: Clock? = nil
+  var activeClock: Clock?
   private var timer: Timer?
   var elapsedTime: TimeInterval = 0
   private var modelContext: ModelContext?
@@ -25,8 +18,8 @@ class GlobalEnvironment {
   }
 
   private func loadClocks() {
-    guard let modelContext = modelContext else { return }
-    
+    guard let modelContext else { return }
+
     do {
       let descriptor = FetchDescriptor<Clock>()
       clocks = try modelContext.fetch(descriptor)
@@ -38,7 +31,7 @@ class GlobalEnvironment {
 
   func startTimer(_ clock: Clock) {
     stopTimer()
-    
+
     let newTimeSegment = TimeSegment(
       startTime: Date(),
       clock: clock
@@ -46,7 +39,7 @@ class GlobalEnvironment {
     clock.timeSegments.append(newTimeSegment)
     modelContext?.insert(newTimeSegment)
     activeClock = clock
-    
+
     // Start new timer
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
       self?.updateTotalTime()
@@ -96,7 +89,7 @@ class GlobalEnvironment {
   }
 
   func totalTimeForName(_ name: String) -> TimeInterval {
-    return clocks.first(where: { $0.name == name })?.elapsedTime() ?? 0
+    clocks.first(where: { $0.name == name })?.elapsedTime() ?? 0
   }
 
   deinit {

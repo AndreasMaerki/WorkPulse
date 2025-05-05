@@ -1,12 +1,5 @@
-//
-//  WorkPulseApp.swift
-//  WorkPulse
-//
-//  Created by Andreas Maerki on 04.05.2025.
-//
-
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct WorkPulseApp: App {
@@ -14,7 +7,7 @@ struct WorkPulseApp: App {
     let schema = Schema([
       Clock.self,
       TimeSegment.self,
-      ColorComponents.self
+      ColorComponents.self,
     ])
     let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

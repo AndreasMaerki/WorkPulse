@@ -1,10 +1,3 @@
-//
-//  DashboardView.swift
-//  WorkPulse
-//
-//  Created by Andreas Maerki on 04.05.2025.
-//
-
 import SwiftUI
 
 struct DashboardView: View {
@@ -21,7 +14,7 @@ struct DashboardView: View {
         HStack {
           Text(viewModel.elapsedTime.formattedHHMMSS())
             .font(.title) +
-          Text(" Logged today")
+            Text(" Logged today")
 
           Spacer()
         }

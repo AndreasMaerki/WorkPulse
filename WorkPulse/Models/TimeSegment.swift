@@ -1,13 +1,6 @@
-//
-//  Classes.swift
-//  WorkPulse
-//
-//  Created by Andreas Maerki on 04.05.2025.
-//
-
 import Foundation
-import SwiftUICore
 import SwiftData
+import SwiftUICore
 
 @Model
 final class TimeSegment {

@@ -1,12 +1,5 @@
-//
-//  Color+Components.swift
-//  WorkPulse
-//
-//  Created by Andreas Maerki on 04.05.2025.
-//
-
-import SwiftUICore
 import AppKit
+import SwiftUICore
 
 extension Color {
   var components: (red: Double, green: Double, blue: Double, opacity: Double)? {

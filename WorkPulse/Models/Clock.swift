@@ -1,15 +1,7 @@
-//
-//  Clock.swift
-//  WorkPulse
-//
-//  Created by Andreas Maerki on 04.05.2025.
-//
-
-
-import Foundation
-import SwiftUICore
-import SwiftData
 import AppKit
+import Foundation
+import SwiftData
+import SwiftUICore
 
 @Model
 final class ColorComponents {
@@ -35,11 +27,13 @@ final class Clock {
 
   var color: Color {
     get {
-      Color(.sRGB,
-            red: colorComponents.red,
-            green: colorComponents.green,
-            blue: colorComponents.blue,
-            opacity: colorComponents.opacity)
+      Color(
+        .sRGB,
+        red: colorComponents.red,
+        green: colorComponents.green,
+        blue: colorComponents.blue,
+        opacity: colorComponents.opacity
+      )
     }
     set {
       if let components = newValue.components {
@@ -55,14 +49,14 @@ final class Clock {
     self.id = id
     self.name = name
     if let components = color.components {
-      self.colorComponents = ColorComponents(
+      colorComponents = ColorComponents(
         red: components.red,
         green: components.green,
         blue: components.blue,
         opacity: components.opacity
       )
     } else {
-      self.colorComponents = ColorComponents(red: 1, green: 1, blue: 1, opacity: 1)
+      colorComponents = ColorComponents(red: 1, green: 1, blue: 1, opacity: 1)
     }
   }
 
