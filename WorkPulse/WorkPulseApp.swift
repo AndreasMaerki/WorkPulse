@@ -23,6 +23,7 @@ struct WorkPulseApp: App {
   init() {
     let context = sharedModelContainer.mainContext
     _globalEnvironment = State(initialValue: GlobalEnvironment(modelContext: context))
+    print(URL.documentsDirectory.path())
   }
 
   var body: some Scene {

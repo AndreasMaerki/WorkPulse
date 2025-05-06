@@ -65,14 +65,6 @@ struct ContentView: View {
   private func addItem() {
     showSheet.toggle()
   }
-
-  private func deleteItems(offsets: IndexSet) {
-    withAnimation {
-      for index in offsets {
-        modelContext.delete(items[index])
-      }
-    }
-  }
 }
 
 struct ClockRowView: View {

@@ -45,6 +45,10 @@ final class Clock {
     }
   }
 
+  var sortedTimeSegments: [TimeSegment] {
+    timeSegments.sorted { $0.startTime < $1.startTime }
+  }
+
   init(id: UUID = UUID(), name: String, color: Color) {
     self.id = id
     self.name = name
@@ -68,6 +72,6 @@ final class Clock {
 
   func updateLastSegmentEndTime() {
     guard !timeSegments.isEmpty else { return }
-    timeSegments.last!.endTime = Date()
+    sortedTimeSegments.last!.endTime = Date()
   }
 }

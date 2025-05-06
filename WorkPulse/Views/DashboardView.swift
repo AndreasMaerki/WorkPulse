@@ -63,7 +63,7 @@ struct ClockDetailView: View {
 
   private func isActiveSegment(_ segment: TimeSegment) -> Bool {
     guard let activeClock = viewModel.activeClock,
-          let lastSegment = activeClock.timeSegments.last
+          let lastSegment = activeClock.sortedTimeSegments.last
     else {
       return false
     }

@@ -37,7 +37,6 @@ class GlobalEnvironment {
       clock: clock
     )
     clock.timeSegments.append(newTimeSegment)
-    modelContext?.insert(newTimeSegment)
     activeClock = clock
 
     // Start new timer
@@ -47,14 +46,10 @@ class GlobalEnvironment {
   }
 
   func stopTimer() {
-    if let activeClock {
-      activeClock.updateLastSegmentEndTime()
-    }
+    updateTotalTime() // Update total time after stopping
     activeClock = nil
     timer?.invalidate()
     timer = nil
-    try? modelContext?.save()
-    updateTotalTime() // Update total time after stopping
   }
 
   func addClock(_ name: String, _ color: Color) {
