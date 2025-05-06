@@ -25,29 +25,31 @@ struct DashboardView: View {
       .cornerRadius(8)
 
       // Individual clocks section
-      VStack(alignment: .leading, spacing: 16) {
-        Text("Clocks")
-          .font(.headline)
+      ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
+          Text("Clocks")
+            .font(.headline)
 
-        ForEach(viewModel.clocks) { clock in
-          ClockDetailView(
-            clock: clock,
-            isExpanded: expandedClockId == clock.id,
-            onTap: {
-              withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                if expandedClockId == clock.id {
-                  expandedClockId = nil
-                } else {
-                  expandedClockId = clock.id
+          ForEach(viewModel.clocks) { clock in
+            ClockDetailView(
+              clock: clock,
+              isExpanded: expandedClockId == clock.id,
+              onTap: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                  if expandedClockId == clock.id {
+                    expandedClockId = nil
+                  } else {
+                    expandedClockId = clock.id
+                  }
                 }
               }
-            }
-          )
+            )
+          }
         }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(8)
       }
-      .padding()
-      .background(Color.gray.opacity(0.1))
-      .cornerRadius(8)
 
       Spacer()
     }
@@ -60,14 +62,25 @@ struct ClockDetailView: View {
   let isExpanded: Bool
   let onTap: () -> Void
   @Environment(GlobalEnvironment.self) private var viewModel
+  @State private var expandedDays: Set<Date> = []
 
   private func isActiveSegment(_ segment: TimeSegment) -> Bool {
     guard let activeClock = viewModel.activeClock,
-          let lastSegment = activeClock.sortedTimeSegments.last
+          let lastSegment = activeClock.timeSegments.last
     else {
       return false
     }
     return segment.id == lastSegment.id
+  }
+
+  private func groupSegmentsByDay() -> [(Date, String, [TimeSegment])] {
+    let calendar = Calendar.current
+    let grouped = Dictionary(grouping: clock.sortedTimeSegments) { segment in
+      calendar.startOfDay(for: segment.startTime)
+    }
+    return grouped.sorted { $0.key > $1.key }
+      .map { ($0.key.formattedForTimeSegment(), $0.value.sorted(by: { $0.startTime > $1.startTime })) }
+      .map { (calendar.startOfDay(for: $0.1.first?.startTime ?? Date()), $0.0, $0.1) }
   }
 
   var body: some View {
@@ -93,25 +106,70 @@ struct ClockDetailView: View {
 
       // Time segments
       if isExpanded {
-        VStack(alignment: .leading, spacing: 8) {
-          ForEach(clock.timeSegments.sorted(by: { $0.startTime > $1.startTime })) { segment in
-            HStack {
-              Text(segment.startTime.formatted(date: .omitted, time: .shortened))
-                .foregroundStyle(.secondary)
-              Text("-")
-                .foregroundStyle(.secondary)
-              Text((isActiveSegment(segment) ? "Running" : segment.endTime?.formatted(date: .omitted, time: .shortened) ?? ""))
-                .foregroundStyle(.secondary)
-              Spacer()
-              Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
-                .monospacedDigit()
+        VStack(alignment: .leading, spacing: 16) {
+          ForEach(groupSegmentsByDay(), id: \.0) { day, dayName, segments in
+            VStack(alignment: .leading, spacing: 8) {
+              Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                  if expandedDays.contains(day) {
+                    expandedDays.remove(day)
+                  } else {
+                    expandedDays.insert(day)
+                  }
+                }
+              }) {
+                HStack {
+                  Text(dayName)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                  Spacer()
+                  Image(systemName: "chevron.right")
+                    .foregroundStyle(.secondary)
+                    .rotationEffect(.degrees(expandedDays.contains(day) ? 90 : 0))
+                }
+                .padding(.vertical, 4)
+              }
+              .buttonStyle(.plain)
+
+              if expandedDays.contains(day) {
+                VStack(alignment: .leading, spacing: 8) {
+                  List {
+                    ForEach(segments) { segment in
+                      HStack {
+                        Text(segment.startTime.formatted(date: .omitted, time: .shortened))
+                          .foregroundStyle(.secondary)
+                        Text("-")
+                          .foregroundStyle(.secondary)
+                        Text((isActiveSegment(segment) ? "Running" : segment.endTime?.formatted(date: .omitted, time: .shortened) ?? ""))
+                          .foregroundStyle(.secondary)
+                        Spacer()
+                        Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
+                          .monospacedDigit()
+                      }
+                      .font(.footnote)
+                      .listRowInsets(EdgeInsets(top: 4, leading: 24, bottom: 4, trailing: 8))
+                    }
+                  }
+                  .scrollContentBackground(.hidden)
+                  .listStyle(.plain)
+                  .frame(height: CGFloat(segments.count * 24)) // Approximate height for each row
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 8)
+                .background(Color.gray.opacity(0.05))
+                .cornerRadius(8)
+              }
             }
-            .font(.footnote)
-            .padding(.leading, 24)
           }
         }
         .padding(.top, 8)
         .transition(.move(edge: .top).combined(with: .opacity))
+        .onAppear {
+          // Expand the first day by default
+          if let firstDay = groupSegmentsByDay().first {
+            expandedDays.insert(firstDay.0)
+          }
+        }
       }
     }
   }
