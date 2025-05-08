@@ -5,6 +5,7 @@ import SwiftData
 import SwiftUICore
 
 @Observable
+@MainActor
 class GlobalEnvironment {
   var clocks: [Clock] = []
   var activeClock: Clock?
@@ -33,9 +34,7 @@ class GlobalEnvironment {
     // Stop any running timer and set its end time
     if let activeClock {
       activeClock.updateLastSegmentEndTime()
-      if let lastSegment = activeClock.timeSegments.last {
-        lastSegment.isRunning = false
-      }
+      activeClock.setLastSegmentIsRunning(false)
     }
     stopTimer()
 
@@ -49,15 +48,15 @@ class GlobalEnvironment {
 
     // Start new timer
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-      self?.updateTotalTime()
+      Task { @MainActor in
+        self?.updateTotalTime()
+      }
     }
   }
 
   func stopTimer() {
     updateTotalTime() // Update total time after stopping
-    if let activeClock, let lastSegment = activeClock.timeSegments.last {
-      lastSegment.isRunning = false
-    }
+    activeClock?.setLastSegmentIsRunning(false)
     activeClock = nil
     timer?.invalidate()
     timer = nil
@@ -107,7 +106,7 @@ class GlobalEnvironment {
     clocks.first(where: { $0.name == name })?.elapsedTime() ?? 0
   }
 
-  deinit {
-    stopTimer()
-  }
+//  deinit {
+//    stopTimer()
+//  }
 }

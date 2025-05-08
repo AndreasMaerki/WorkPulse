@@ -74,4 +74,10 @@ final class Clock {
     guard !timeSegments.isEmpty else { return }
     sortedTimeSegments.last!.endTime = Date()
   }
+
+  func setLastSegmentIsRunning(_ isRunning: Bool) {
+    guard !timeSegments.isEmpty else { return }
+    sortedTimeSegments.last!.isRunning = isRunning
+
+  }
 }
