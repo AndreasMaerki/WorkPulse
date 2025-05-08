@@ -34,7 +34,7 @@ struct PieChartView: View {
             angularInset: 1.0
           )
           .foregroundStyle(data.color)
-          .cornerRadius(8)
+          .cornerRadius(4)
           .annotation(position: .overlay) {
             if data.isSelected {
               Text(data.name)
@@ -48,7 +48,6 @@ struct PieChartView: View {
           }
         }
       }
-      .frame(width: 250, height: 250)
       .chartAngleSelection(value: $selectedTime)
     }
     .onChange(of: selectedTime) { _, newTime in

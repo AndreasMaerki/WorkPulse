@@ -4,30 +4,33 @@ struct DashboardView: View {
   @Environment(GlobalEnvironment.self) private var viewModel
   @State private var expandedClockId: UUID? = nil
   var body: some View {
-    VStack(alignment: .leading, spacing: 24) {
-      HStack {
-        Text("Dashboard")
-          .font(.largeTitle)
-        Spacer()
-      }
+    ScrollView {
+      VStack(alignment: .leading, spacing: 24) {
+        HStack {
+          Text("Dashboard")
+            .font(.largeTitle)
+          Spacer()
+        }
 
-      // Total time section
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Total Time")
-          .font(.headline)
-        Text(viewModel.elapsedTime.formattedHHMMSS())
-          .font(.title)
-          .monospacedDigit()
-      }
-      .padding()
-      .background(Color.gray.opacity(0.1))
-      .cornerRadius(8)
+        // Total time and Pie Chart section
+        HStack(alignment: .top, spacing: 20) {
+          VStack(alignment: .leading, spacing: 16) {
+            Text("Total Time")
+              .font(.title)
+            Text(viewModel.elapsedTime.formattedHHMMSS())
+              .font(.largeTitle)
+              .monospacedDigit()
+          }
+          .padding(20)
+          .background(Color.gray.opacity(0.1))
+          .cornerRadius(8)
+          PieChartView()
+            .frame(width: 120, height: 120)
+          Spacer()
+        }
+        .frame(maxWidth: .infinity)
 
-      // Pie Chart section
-      PieChartView()
-
-      // Individual clocks section
-      ScrollView {
+        // Individual clocks section
         VStack(alignment: .leading, spacing: 16) {
           Text("Clocks")
             .font(.headline)
@@ -49,11 +52,11 @@ struct DashboardView: View {
         .padding()
         .background(Color.gray.opacity(0.1))
         .cornerRadius(8)
-      }
 
-      Spacer()
+        Spacer()
+      }
+      .padding()
     }
-    .padding()
   }
 }
 
