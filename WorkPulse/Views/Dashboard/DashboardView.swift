@@ -3,6 +3,8 @@ import SwiftUI
 struct DashboardView: View {
   @Environment(GlobalEnvironment.self) private var viewModel
   @State private var expandedClockId: UUID? = nil
+  @State private var showCalendar = false
+
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
@@ -24,8 +26,22 @@ struct DashboardView: View {
           .padding(20)
           .background(Color.gray.opacity(0.1))
           .cornerRadius(8)
-          PieChartView()
-            .frame(width: 120, height: 120)
+
+          HStack(spacing: 16) {
+            PieChartView()
+              .frame(width: 120, height: 120)
+
+            Button {
+              showCalendar = true
+            } label: {
+              Image(systemName: "calendar")
+                .font(.title2)
+                .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .help("View time segments in calendar")
+          }
+
           Spacer()
         }
         .frame(maxWidth: .infinity)
@@ -56,6 +72,9 @@ struct DashboardView: View {
         Spacer()
       }
       .padding()
+    }
+    .sheet(isPresented: $showCalendar) {
+      TimeSegmentCalendarView()
     }
   }
 }
