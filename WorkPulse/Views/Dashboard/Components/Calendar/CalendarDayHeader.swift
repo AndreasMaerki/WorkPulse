@@ -7,7 +7,7 @@ struct CalendarDayHeader: View {
     VStack(alignment: .leading, spacing: 2) {
       Text(dateString)
         .font(.title3.bold())
-      Text("You have \(segmentCount) segment\(segmentCount == 1 ? "" : "s") scheduled for today")
+      Text("You have \(segmentCount) segment\(segmentCount == 1 ? "" : "s") recorded today")
         .font(.subheadline)
         .foregroundStyle(.secondary)
     }

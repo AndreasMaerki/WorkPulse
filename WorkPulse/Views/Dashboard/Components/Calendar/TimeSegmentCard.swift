@@ -30,29 +30,33 @@ struct TimeSegmentCard: View {
       .fill((segment.clock?.color ?? .accentColor).opacity(0.18))
       .frame(width: 260, height: height)
       .overlay(
-        VStack(alignment: .leading, spacing: 4) {
-          Text(segment.clock?.name ?? "Segment")
-            .font(.headline)
-            .foregroundColor(segment.clock?.color ?? .accentColor)
-          if let note = segment.note {
-            Text(note)
-              .font(.caption)
+        Group {
+          if height > 10 {
+            VStack(alignment: .leading, spacing: 4) {
+              Text(segment.clock?.name ?? "Segment")
+                .font(.headline)
+                .foregroundColor(segment.clock?.color ?? .accentColor)
+              if let note = segment.note {
+                Text(note)
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
+                  .lineLimit(1)
+              }
+              HStack(spacing: 8) {
+                Text(segment.startTime.formatted(date: .omitted, time: .shortened))
+                Text("-")
+                Text((segment.isRunning ? "Running" : segment.endTime?.formatted(date: .omitted, time: .shortened) ?? ""))
+                Spacer()
+                Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
+                  .monospacedDigit()
+                  .foregroundColor(segment.clock?.color ?? .accentColor)
+              }
+              .font(.caption2)
               .foregroundStyle(.secondary)
-              .lineLimit(2)
+            }
+            .padding(10)
           }
-          HStack(spacing: 8) {
-            Text(segment.startTime.formatted(date: .omitted, time: .shortened))
-            Text("-")
-            Text((segment.isRunning ? "Running" : segment.endTime?.formatted(date: .omitted, time: .shortened) ?? ""))
-            Spacer()
-            Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
-              .monospacedDigit()
-              .foregroundColor(segment.clock?.color ?? .accentColor)
-          }
-          .font(.caption2)
-          .foregroundStyle(.secondary)
         }
-        .padding(10)
       )
       .padding(.leading, 8)
       .offset(y: yStart)
