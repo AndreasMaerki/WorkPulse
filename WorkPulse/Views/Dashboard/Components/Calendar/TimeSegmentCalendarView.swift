@@ -27,7 +27,7 @@ struct TimeSegmentCalendarView: View {
         let segmentStart = calendar.startOfDay(for: segment.startTime)
         let segmentEnd = segment.endTime ?? Date()
         let duration = segmentEnd.timeIntervalSince(segment.startTime)
-        return segmentStart == startOfDay && duration >= 60 // Filter segments less than 1 minute
+        return segmentStart == startOfDay && duration >= 60 // * 15 // Filter segments less than 15 minutes
       }
     }.sorted { $0.startTime < $1.startTime }
   }
@@ -36,22 +36,10 @@ struct TimeSegmentCalendarView: View {
     segmentsForDate(selectedDate)
   }
 
-  private var monthYearString: String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "LLLL yyyy"
-    return formatter.string(from: selectedDate)
-  }
-
-  private var todayString: String {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .full
-    return formatter.string(from: selectedDate)
-  }
-
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       CalendarHeaderView(
-        monthYear: monthYearString,
+        monthYear: selectedDate.monthYearString,
         onPrev: { moveWeek(by: -1) },
         onNext: { moveWeek(by: 1) }
       )
@@ -62,7 +50,7 @@ struct TimeSegmentCalendarView: View {
         onSelect: { selectedDate = $0 }
       )
       CalendarDayHeader(
-        dateString: todayString,
+        dateString: selectedDate.todayString,
         segmentCount: selectedDaySegments.count
       )
       CalendarTimelineView(

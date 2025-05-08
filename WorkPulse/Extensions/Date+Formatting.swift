@@ -14,4 +14,16 @@ extension Date {
       return formatter.string(from: self)
     }
   }
+
+  var monthYearString: String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "LLLL yyyy"
+    return formatter.string(from: self)
+  }
+
+  var todayString: String {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .full
+    return formatter.string(from: self)
+  }
 }
