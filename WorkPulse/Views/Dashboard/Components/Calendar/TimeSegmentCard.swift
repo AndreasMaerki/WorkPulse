@@ -33,6 +33,7 @@ struct TimeSegmentCard: View {
         VStack(alignment: .leading, spacing: 4) {
           Text(segment.clock?.name ?? "Segment")
             .font(.headline)
+            .foregroundColor(segment.clock?.color ?? .accentColor)
           if let note = segment.note {
             Text(note)
               .font(.caption)
@@ -46,6 +47,7 @@ struct TimeSegmentCard: View {
             Spacer()
             Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
               .monospacedDigit()
+              .foregroundColor(segment.clock?.color ?? .accentColor)
           }
           .font(.caption2)
           .foregroundStyle(.secondary)

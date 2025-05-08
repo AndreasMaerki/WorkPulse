@@ -72,7 +72,6 @@ struct TimeSegmentCalendarView: View {
       Spacer()
     }
     .frame(width: 420, height: 600)
-    .background(Color(.systemRed))
     .cornerRadius(24)
     .shadow(radius: 16)
     .overlay(

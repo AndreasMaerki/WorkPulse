@@ -43,7 +43,7 @@ struct CalendarTimelineView: View {
         }
       }
     }
-    .background(Color(.systemGray))
+    .background(Color.gray.opacity(0.1))
     .cornerRadius(16)
     .padding(.horizontal)
     .padding(.bottom)
