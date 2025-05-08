@@ -30,12 +30,20 @@ class GlobalEnvironment {
   }
 
   func startTimer(_ clock: Clock) {
+    // Stop any running timer and set its end time
+    if let activeClock {
+      activeClock.updateLastSegmentEndTime()
+      if let lastSegment = activeClock.timeSegments.last {
+        lastSegment.isRunning = false
+      }
+    }
     stopTimer()
 
     let newTimeSegment = TimeSegment(
       startTime: Date(),
       clock: clock
     )
+    newTimeSegment.isRunning = true
     clock.timeSegments.append(newTimeSegment)
     activeClock = clock
 
@@ -47,6 +55,9 @@ class GlobalEnvironment {
 
   func stopTimer() {
     updateTotalTime() // Update total time after stopping
+    if let activeClock, let lastSegment = activeClock.timeSegments.last {
+      lastSegment.isRunning = false
+    }
     activeClock = nil
     timer?.invalidate()
     timer = nil
@@ -68,6 +79,15 @@ class GlobalEnvironment {
     }
     try? modelContext?.save()
     updateTotalTime()
+  }
+
+  func deleteTimeSegment(_ segment: TimeSegment, from clock: Clock) {
+    if let index = clock.timeSegments.firstIndex(where: { $0.id == segment.id }) {
+      clock.timeSegments.remove(at: index)
+      modelContext?.delete(segment)
+      try? modelContext?.save()
+      updateTotalTime()
+    }
   }
 
   func updateTotalTime() {

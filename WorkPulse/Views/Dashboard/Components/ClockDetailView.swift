@@ -6,15 +6,6 @@ struct ClockDetailView: View {
   @Environment(GlobalEnvironment.self) private var viewModel
   @State private var expandedDay: Date?
 
-  private func isActiveSegment(_ segment: TimeSegment) -> Bool {
-    guard let activeClock = viewModel.activeClock,
-          let lastSegment = activeClock.timeSegments.last
-    else {
-      return false
-    }
-    return segment.id == lastSegment.id
-  }
-
   private func groupSegmentsByDay() -> [(Date, String, [TimeSegment])] {
     let calendar = Calendar.current
     let grouped = Dictionary(grouping: clock.sortedTimeSegments) { segment in
@@ -36,8 +27,7 @@ struct ClockDetailView: View {
       if isExpanded {
         ExpandableDayListView(
           days: groupSegmentsByDay(),
-          expandedDay: $expandedDay,
-          isActiveSegment: isActiveSegment
+          expandedDay: $expandedDay
         )
         .padding(.top, 8)
         .transition(.move(edge: .top).combined(with: .opacity))

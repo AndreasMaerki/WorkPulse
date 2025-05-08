@@ -3,11 +3,9 @@ import SwiftUI
 struct ExpandableDayListView: View {
   let days: [(Date, String, [TimeSegment])]
   @Binding var expandedDay: Date?
-  let isActiveSegment: (TimeSegment) -> Bool
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text("Hello")
       ForEach(days, id: \.0) { day, dayName, segments in
         ExpandableDayView(
           day: day,
@@ -20,8 +18,7 @@ struct ExpandableDayListView: View {
                 expandedDay = isExpanded ? day : nil
               }
             }
-          ),
-          isActiveSegment: isActiveSegment
+          )
         )
       }
     }

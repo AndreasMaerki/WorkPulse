@@ -5,7 +5,7 @@ struct ExpandableDayView: View {
   let dayName: String
   let segments: [TimeSegment]
   @Binding var isExpanded: Bool
-  let isActiveSegment: (TimeSegment) -> Bool
+  @Environment(GlobalEnvironment.self) private var viewModel
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -31,7 +31,7 @@ struct ExpandableDayView: View {
                 .foregroundStyle(.secondary)
               Text("-")
                 .foregroundStyle(.secondary)
-              Text((isActiveSegment(segment) ? "Running" : segment.endTime?.formatted(date: .omitted, time: .shortened) ?? ""))
+              Text((segment.isRunning ? "Running" : segment.endTime?.formatted(date: .omitted, time: .shortened) ?? ""))
                 .foregroundStyle(.secondary)
               Spacer()
               Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
@@ -39,6 +39,15 @@ struct ExpandableDayView: View {
             }
             .font(.footnote)
             .listRowInsets(EdgeInsets(top: 4, leading: 24, bottom: 4, trailing: 8))
+            .swipeActions(edge: .trailing) {
+              Button(role: .destructive) {
+                if let clock = segment.clock {
+                  viewModel.deleteTimeSegment(segment, from: clock)
+                }
+              } label: {
+                Label("Delete", systemImage: "trash")
+              }
+            }
           }
         }
         .scrollContentBackground(.hidden)
