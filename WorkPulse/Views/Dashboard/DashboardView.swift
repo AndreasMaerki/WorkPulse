@@ -23,6 +23,9 @@ struct DashboardView: View {
       .background(Color.gray.opacity(0.1))
       .cornerRadius(8)
 
+      // Pie Chart section
+      PieChartView()
+
       // Individual clocks section
       ScrollView {
         VStack(alignment: .leading, spacing: 16) {
