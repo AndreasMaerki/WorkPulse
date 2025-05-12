@@ -89,7 +89,7 @@ struct DashboardView: View {
     .sheet(isPresented: $showCalendar) {
       CalendarView()
         .environment(CalendarViewModel(events: calendarEvents))
-        .presentationSizing(.fitted)
+        .frame(minWidth: 800, minHeight: 600)
     }
   }
 }

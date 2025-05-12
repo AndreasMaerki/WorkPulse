@@ -8,26 +8,39 @@ import SwiftUI
 
 struct EventView: View {
   let event: CalendarEvent
+  @State private var isHovering = false
 
   var body: some View {
-    ZStack(alignment: .topLeading) {
-      RoundedRectangle(cornerRadius: 4)
-        .fill(event.color.opacity(0.6))
+    GeometryReader { geometry in
+      ZStack(alignment: .topLeading) {
+        RoundedRectangle(cornerRadius: 4)
+          .fill(event.color.opacity(isHovering ? 0.8 : 0.6))
 
-      VStack(alignment: .leading) {
-        Text(event.title)
-          .font(.headline)
-          .foregroundColor(.white)
+        if geometry.size.height >= 40 {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(event.title)
+              .font(.caption)
+              .lineLimit(1)
+              .foregroundColor(.white)
 
-        HStack {
-          Text(timeString(from: event.startTime))
-          Text("-")
-          Text(timeString(from: event.endTime))
+            if geometry.size.height >= 55 {
+              HStack {
+                Text(timeString(from: event.startTime))
+                Text("-")
+                Text(timeString(from: event.endTime))
+              }
+              .font(.caption2)
+              .foregroundColor(.white.opacity(0.9))
+            }
+          }
+          .padding(4)
+          .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height, alignment: .topLeading)
         }
-        .font(.caption)
-        .foregroundColor(.white)
       }
-      .padding(8)
+      .onHover { hovering in
+        isHovering = hovering
+      }
+      .help("\(event.title)\n\(timeString(from: event.startTime)) - \(timeString(from: event.endTime))")
     }
   }
 

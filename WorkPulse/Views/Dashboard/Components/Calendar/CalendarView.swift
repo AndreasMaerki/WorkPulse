@@ -3,6 +3,7 @@ import SwiftUI
 
 struct CalendarView: View {
   @Environment(CalendarViewModel.self) private var viewModel
+  @Environment(\.dismiss) private var dismiss
   @State private var selectedView = CalendarViewType.day
 
   enum CalendarViewType {
@@ -11,13 +12,26 @@ struct CalendarView: View {
   }
 
   var body: some View {
-    VStack {
+    VStack(spacing: 0) {
+      HStack {
+        Button(action: { dismiss() }) {
+          Image(systemName: "xmark.circle.fill")
+            .foregroundStyle(.secondary)
+            .font(.title2)
+        }
+        .buttonStyle(.plain)
+        .padding()
+
+        Spacer()
+      }
+
       Picker("View", selection: $selectedView) {
         Text("Day").tag(CalendarViewType.day)
         Text("Week").tag(CalendarViewType.week)
       }
       .pickerStyle(.segmented)
-      .padding()
+      .padding(.horizontal)
+      .padding(.bottom)
 
       switch selectedView {
       case .day:
@@ -26,6 +40,7 @@ struct CalendarView: View {
         WeekView()
       }
     }
+    .frame(minWidth: 800, minHeight: 600)
   }
 }
 

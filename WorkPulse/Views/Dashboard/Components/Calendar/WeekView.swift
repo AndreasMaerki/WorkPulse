@@ -3,6 +3,7 @@ import SwiftUI
 struct WeekView: View {
   @Environment(CalendarViewModel.self) private var viewModel
   private let layoutProvider: CalendarLayoutProvider
+  @State private var scrollProxy: ScrollViewProxy? = nil
 
   let timeSlots: [Int] = Array(0 ... 23)
   let slotHeight: CGFloat = 60
@@ -15,14 +16,33 @@ struct WeekView: View {
 
   var body: some View {
     GeometryReader { geometry in
-      VStack {
+      VStack(spacing: 0) {
         navigationHeader
           .padding()
 
+        // Fixed header row
+        HStack(alignment: .top, spacing: 0) {
+          Rectangle()
+            .fill(.clear)
+            .frame(width: hourLabelWidth, height: 12)
+
+          HStack(spacing: 0) {
+            ForEach(0 ..< 7) { dayOffset in
+              if let date = calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek) {
+                Text(date, format: .dateTime.weekday(.abbreviated).day())
+                  .frame(width: (geometry.size.width - hourLabelWidth - 40) / 7)
+                  .padding(.bottom, 8)
+              }
+            }
+          }
+        }
+        .padding(.horizontal)
+        .background(.background)
+
         ScrollView {
-          HStack(alignment: .top, spacing: 0) {
-            timeColumn
-            ScrollView(.horizontal, showsIndicators: false) {
+          ScrollViewReader { proxy in
+            HStack(alignment: .top, spacing: 0) {
+              timeColumn
               HStack(spacing: 0) {
                 ForEach(0 ..< 7) { dayOffset in
                   if let date = calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek) {
@@ -34,17 +54,22 @@ struct WeekView: View {
                         Rectangle()
                           .fill(Color.gray.opacity(0.2))
                           .frame(width: 1)
-                          .frame(height: CGFloat(timeSlots.count) * slotHeight + 30) // Add 30 for header space
+                          .frame(height: CGFloat(timeSlots.count) * slotHeight)
                       }
                     }
                   }
                 }
               }
             }
+            .padding()
+            .onAppear {
+              // Scroll to 6:00 AM
+              withAnimation {
+                proxy.scrollTo(6, anchor: .top)
+              }
+            }
           }
-          .padding()
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
   }
@@ -73,24 +98,17 @@ struct WeekView: View {
 
   private var timeColumn: some View {
     VStack(alignment: .leading, spacing: 0) {
-      Rectangle()
-        .fill(.clear)
-        .frame(width: hourLabelWidth, height: 30) // Header space
-
       ForEach(timeSlots, id: \.self) { hour in
         Text("\(hour):00")
           .frame(width: hourLabelWidth, alignment: .trailing)
           .frame(height: slotHeight)
+          .id(hour) // Add id for scrolling
       }
     }
   }
 
   private func dayColumn(for date: Date, columnWidth: CGFloat) -> some View {
     VStack(spacing: 0) {
-      Text(date, format: .dateTime.weekday(.abbreviated).day())
-        .frame(width: columnWidth)
-        .padding(.bottom, 8)
-
       ZStack(alignment: .topLeading) {
         VStack(spacing: 0) {
           ForEach(timeSlots, id: \.self) { _ in

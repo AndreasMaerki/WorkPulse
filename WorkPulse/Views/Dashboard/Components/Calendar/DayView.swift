@@ -9,7 +9,7 @@ struct DayView: View {
   let hourLabelWidth: CGFloat = 50
   let calendar = Calendar.current
 
-  init(viewModel: CalendarViewModel = CalendarViewModel(events: CalendarEvent.mockEvents)) {
+  init() {
     layoutProvider = CalendarLayoutProvider(slotHeight: slotHeight, calendar: calendar)
   }
 
@@ -20,11 +20,19 @@ struct DayView: View {
           .padding()
 
         ScrollView {
-          ZStack(alignment: .topLeading) {
-            timeSlotList
-            eventsOverlay(availableWidth: geometry.size.width)
+          ScrollViewReader { proxy in
+            ZStack(alignment: .topLeading) {
+              timeSlotList
+              eventsOverlay(availableWidth: geometry.size.width)
+            }
+            .padding(.horizontal)
+            .onAppear {
+              // Scroll to 6:00 AM
+              withAnimation {
+                proxy.scrollTo(6, anchor: .top)
+              }
+            }
           }
-          .padding(.horizontal)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
@@ -55,6 +63,7 @@ struct DayView: View {
             .frame(height: 1)
         }
         .frame(height: slotHeight)
+        .id(hour) // Add id for scrolling
       }
     }
   }
