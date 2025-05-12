@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct CalendarView: View {
+  @Environment(CalendarViewModel.self) private var viewModel
   @State private var selectedView = CalendarViewType.day
 
   enum CalendarViewType {
@@ -30,4 +31,5 @@ struct CalendarView: View {
 
 #Preview {
   CalendarView()
+    .environment(CalendarViewModel(events: CalendarEvent.mockEvents))
 }

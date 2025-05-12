@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct DayView: View {
-  @State var viewModel = CalendarViewModel(events: CalendarEvent.mockEvents)
+  @Environment(CalendarViewModel.self) private var viewModel
   private let layoutProvider: CalendarLayoutProvider
 
   let timeSlots: [Int] = Array(0 ... 23)
@@ -10,7 +10,6 @@ struct DayView: View {
   let calendar = Calendar.current
 
   init(viewModel: CalendarViewModel = CalendarViewModel(events: CalendarEvent.mockEvents)) {
-    _viewModel = State(initialValue: viewModel)
     layoutProvider = CalendarLayoutProvider(slotHeight: slotHeight, calendar: calendar)
   }
 
@@ -85,4 +84,5 @@ struct DayView: View {
 
 #Preview {
   DayView()
+    .environment(CalendarViewModel(events: CalendarEvent.mockEvents))
 }

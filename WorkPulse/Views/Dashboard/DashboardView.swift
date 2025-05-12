@@ -5,6 +5,19 @@ struct DashboardView: View {
   @State private var expandedClockId: UUID? = nil
   @State private var showCalendar = false
 
+  private var calendarEvents: [CalendarEvent] {
+    viewModel.clocks.flatMap { clock in
+      clock.timeSegments.map { segment in
+        CalendarEvent(
+          title: clock.name,
+          startTime: segment.startTime,
+          endTime: segment.endTime ?? Date(),
+          color: clock.color
+        )
+      }
+    }
+  }
+
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
@@ -74,7 +87,9 @@ struct DashboardView: View {
       .padding()
     }
     .sheet(isPresented: $showCalendar) {
-      TimeSegmentCalendarView()
+      CalendarView()
+        .environment(CalendarViewModel(events: calendarEvents))
+        .presentationSizing(.fitted)
     }
   }
 }
