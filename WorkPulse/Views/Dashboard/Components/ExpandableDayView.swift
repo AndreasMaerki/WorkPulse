@@ -9,6 +9,12 @@ struct ExpandableDayView: View {
   @State private var selectedSegment: TimeSegment?
   @State private var showNoteEditor = false
 
+  private var totalDayTime: TimeInterval {
+    segments.reduce(0) { result, segment in
+      result + segment.elapsedTime(refTime: Date())
+    }
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Button(action: { isExpanded.toggle() }) {
@@ -17,6 +23,10 @@ struct ExpandableDayView: View {
             .font(.subheadline)
             .foregroundStyle(.secondary)
           Spacer()
+          Text(totalDayTime.formattedHHMMSS())
+            .font(.subheadline)
+            .monospacedDigit()
+            .foregroundStyle(.primary)
           Image(systemName: "chevron.right")
             .foregroundStyle(.secondary)
             .rotationEffect(.degrees(isExpanded ? 90 : 0))
