@@ -9,13 +9,20 @@ import SwiftUICore
 class GlobalEnvironment {
   var clocks: [Clock] = []
   var activeClock: Clock?
-  var activeTimeSegment: TimeSegment?
+  var activeTimeSegment: TimeSegment? {
+    didSet {
+      persistenceManager.setActiveTimeSegment(activeTimeSegment)
+    }
+  }
+
   private var timer: Timer?
   var elapsedTime: TimeInterval = 0
   private var modelContext: ModelContext?
+  private var persistenceManager: PersistenceManager
 
   init(modelContext: ModelContext? = nil) {
     self.modelContext = modelContext
+    persistenceManager = PersistenceManager(modelContext: modelContext)
     loadClocks()
   }
 
@@ -48,12 +55,14 @@ class GlobalEnvironment {
     activeClock = clock
     activeTimeSegment = newTimeSegment
 
-    // Start new timer
+    // Start new timer for UI updates (every second)
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
       Task { @MainActor in
         self?.updateTotalTime()
       }
     }
+
+    persistenceManager.startPersistenceTimer()
   }
 
   func stopTimer() {
@@ -65,12 +74,15 @@ class GlobalEnvironment {
     activeClock = nil
     timer?.invalidate()
     timer = nil
+
+    persistenceManager.stopPersistenceTimer()
   }
 
   func addClock(_ name: String, _ color: Color) {
     let clock = Clock(name: name, color: color)
     modelContext?.insert(clock)
     clocks.append(clock)
+    persistenceManager.persistData()
   }
 
   func deleteClock(_ clock: Clock) {
@@ -81,7 +93,7 @@ class GlobalEnvironment {
     if let index = clocks.firstIndex(where: { $0.id == clock.id }) {
       clocks.remove(at: index)
     }
-    try? modelContext?.save()
+    persistenceManager.persistData()
     updateTotalTime()
   }
 
@@ -92,7 +104,7 @@ class GlobalEnvironment {
     if let index = clock.timeSegments.firstIndex(where: { $0.id == segment.id }) {
       clock.timeSegments.remove(at: index)
       modelContext?.delete(segment)
-      try? modelContext?.save()
+      persistenceManager.persistData()
       updateTotalTime()
     }
   }
@@ -105,6 +117,8 @@ class GlobalEnvironment {
   }
 
   private func updateTime() {
+    // The PersistenceManager will update the activeTimeSegment's endTime when persisting
+    // This is just for UI updates between persistence intervals
     if let activeTimeSegment {
       activeTimeSegment.endTime = Date()
     }
