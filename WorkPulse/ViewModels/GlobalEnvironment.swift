@@ -9,6 +9,7 @@ import SwiftUICore
 class GlobalEnvironment {
   var clocks: [Clock] = []
   var activeClock: Clock?
+  var activeTimeSegment: TimeSegment?
   private var timer: Timer?
   var elapsedTime: TimeInterval = 0
   private var modelContext: ModelContext?
@@ -32,9 +33,9 @@ class GlobalEnvironment {
 
   func startTimer(_ clock: Clock) {
     // Stop any running timer and set its end time
-    if let activeClock {
-      activeClock.updateLastSegmentEndTime()
-      activeClock.setLastSegmentIsRunning(false)
+    if let activeTimeSegment {
+      activeTimeSegment.endTime = Date()
+      activeTimeSegment.isRunning = false
     }
     stopTimer()
 
@@ -45,6 +46,7 @@ class GlobalEnvironment {
     newTimeSegment.isRunning = true
     clock.timeSegments.append(newTimeSegment)
     activeClock = clock
+    activeTimeSegment = newTimeSegment
 
     // Start new timer
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
@@ -56,7 +58,10 @@ class GlobalEnvironment {
 
   func stopTimer() {
     updateTotalTime() // Update total time after stopping
-    activeClock?.setLastSegmentIsRunning(false)
+    if let activeTimeSegment {
+      activeTimeSegment.isRunning = false
+    }
+    activeTimeSegment = nil
     activeClock = nil
     timer?.invalidate()
     timer = nil
@@ -81,6 +86,9 @@ class GlobalEnvironment {
   }
 
   func deleteTimeSegment(_ segment: TimeSegment, from clock: Clock) {
+    if activeTimeSegment?.id == segment.id {
+      stopTimer()
+    }
     if let index = clock.timeSegments.firstIndex(where: { $0.id == segment.id }) {
       clock.timeSegments.remove(at: index)
       modelContext?.delete(segment)
@@ -97,8 +105,8 @@ class GlobalEnvironment {
   }
 
   private func updateTime() {
-    if let activeClock {
-      activeClock.updateLastSegmentEndTime()
+    if let activeTimeSegment {
+      activeTimeSegment.endTime = Date()
     }
   }
 
