@@ -15,10 +15,10 @@ class GlobalEnvironment {
     }
   }
 
-  private var timer: Timer?
+  private var uiTimer: Timer?
   var elapsedTime: TimeInterval = 0
   private var modelContext: ModelContext?
-  var persistenceManager: PersistenceManager
+  private var persistenceManager: PersistenceManager
 
   init(modelContext: ModelContext? = nil) {
     self.modelContext = modelContext
@@ -32,7 +32,7 @@ class GlobalEnvironment {
     do {
       let descriptor = FetchDescriptor<Clock>()
       clocks = try modelContext.fetch(descriptor)
-      updateTotalTime() // Initialize total time
+      updateTime()
     } catch {
       print("Error fetching clocks: \(error)")
     }
@@ -75,10 +75,9 @@ class GlobalEnvironment {
     activeClock = clock
     activeTimeSegment = timeSegment
 
-    // Start new timer for UI updates (every second)
-    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+    uiTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
       Task { @MainActor in
-        self?.updateTotalTime()
+        self?.updateTime()
       }
     }
 
@@ -86,14 +85,14 @@ class GlobalEnvironment {
   }
 
   func stopTimer() {
-    updateTotalTime() // Update total time after stopping
+    updateTime()
     if let activeTimeSegment {
       activeTimeSegment.isRunning = false
     }
     activeTimeSegment = nil
     activeClock = nil
-    timer?.invalidate()
-    timer = nil
+    uiTimer?.invalidate()
+    uiTimer = nil
 
     persistenceManager.stopPersistenceTimer()
   }
@@ -114,7 +113,7 @@ class GlobalEnvironment {
       clocks.remove(at: index)
     }
     persistenceManager.persistData()
-    updateTotalTime()
+    updateTime()
   }
 
   func deleteTimeSegment(_ segment: TimeSegment, from clock: Clock) {
@@ -125,20 +124,15 @@ class GlobalEnvironment {
       clock.timeSegments.remove(at: index)
       modelContext?.delete(segment)
       persistenceManager.persistData()
-      updateTotalTime()
-    }
-  }
-
-  func updateTotalTime() {
-    updateTime()
-    elapsedTime = clocks.reduce(0) { result, clock in
-      result + clock.elapsedTime()
+      updateTime()
     }
   }
 
   private func updateTime() {
-    // The PersistenceManager will update the activeTimeSegment's endTime when persisting
-    // This is just for UI updates between persistence intervals
+    elapsedTime = clocks.reduce(0) { result, clock in
+      result + clock.elapsedTime()
+    }
+
     if let activeTimeSegment {
       activeTimeSegment.endTime = Date()
     }
@@ -146,5 +140,9 @@ class GlobalEnvironment {
 
   func totalTimeForName(_ name: String) -> TimeInterval {
     clocks.first(where: { $0.name == name })?.elapsedTime() ?? 0
+  }
+
+  func persistData() {
+    persistenceManager.persistData()
   }
 }

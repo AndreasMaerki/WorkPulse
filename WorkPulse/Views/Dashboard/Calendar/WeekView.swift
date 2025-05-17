@@ -5,19 +5,10 @@ struct WeekView: View {
   private let layoutProvider: CalendarLayoutProvider
   @State private var scrollProxy: ScrollViewProxy? = nil
 
-  let timeSlots: [Int] = Array(0 ... 23)
-  let slotHeight: CGFloat = 60
-  let hourLabelWidth: CGFloat = 50
-  let calendar = Calendar.current
-
-  private var startOfWeek: Date {
-    let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: viewModel.currentDate)
-    return calendar.date(from: components) ?? viewModel.currentDate
-  }
-
-  private var endOfWeek: Date {
-    calendar.date(byAdding: .day, value: 6, to: startOfWeek) ?? startOfWeek
-  }
+  private let timeSlots: [Int] = Array(0 ... 23)
+  private let slotHeight: CGFloat = 60
+  private let hourLabelWidth: CGFloat = 50
+  private let calendar = Calendar.current
 
   init() {
     layoutProvider = CalendarLayoutProvider(slotHeight: slotHeight, calendar: calendar)
@@ -27,7 +18,7 @@ struct WeekView: View {
     GeometryReader { geometry in
       let dayWidth = (geometry.size.width - hourLabelWidth - 40) / 7
       let daysOfWeek = (0 ..< 7).compactMap { dayOffset in
-        calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)
+        calendar.date(byAdding: .day, value: dayOffset, to: viewModel.startOfWeek)
       }
 
       VStack(spacing: 0) {
@@ -93,11 +84,11 @@ struct WeekView: View {
 
   private var navigationHeader: some View {
     HStack {
-      Button(action: { goToPreviousWeek() }) {
+      Button(action: { viewModel.goToPreviousWeek() }) {
         Image(systemName: "chevron.left")
       }
-      Text("\(startOfWeek, format: .dateTime.month().day()) - \(endOfWeek, format: .dateTime.month().day())")
-      Button(action: { goToNextWeek() }) {
+      Text("\(viewModel.startOfWeek, format: .dateTime.month().day()) - \(viewModel.endOfWeek, format: .dateTime.month().day())")
+      Button(action: { viewModel.goToNextWeek() }) {
         Image(systemName: "chevron.right")
       }
     }
@@ -142,14 +133,6 @@ struct WeekView: View {
       }
     }
     .frame(width: columnWidth)
-  }
-
-  private func goToNextWeek() {
-    viewModel.currentDate = calendar.date(byAdding: .weekOfYear, value: 1, to: viewModel.currentDate) ?? viewModel.currentDate
-  }
-
-  private func goToPreviousWeek() {
-    viewModel.currentDate = calendar.date(byAdding: .weekOfYear, value: -1, to: viewModel.currentDate) ?? viewModel.currentDate
   }
 }
 

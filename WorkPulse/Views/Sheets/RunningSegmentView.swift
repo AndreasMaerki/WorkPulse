@@ -55,7 +55,7 @@ struct RunningSegmentView: View {
           // End tracking now
           segment.isRunning = false
           segment.endTime = Date()
-          globalEnvironment.persistenceManager.persistData()
+          globalEnvironment.persistData()
           dismiss()
         } label: {
           Label("End Now", systemImage: "stop.circle")
@@ -64,7 +64,7 @@ struct RunningSegmentView: View {
         .buttonStyle(.bordered)
 
         VStack(alignment: .leading, spacing: 4) {
-          Text("Edit End Time:")
+          Text("Edit End Time (Defaults to seen last update):")
             .font(.subheadline)
 
           DatePicker("", selection: $selectedEndTime)
@@ -75,7 +75,7 @@ struct RunningSegmentView: View {
             // Set custom end time
             segment.isRunning = false
             segment.endTime = selectedEndTime
-            globalEnvironment.persistenceManager.persistData()
+            globalEnvironment.persistData()
             dismiss()
           } label: {
             Label("Set Custom End Time", systemImage: "calendar")
