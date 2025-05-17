@@ -7,6 +7,7 @@ struct ContentView: View {
   @Query private var items: [Item]
 
   @State var showSheet = false
+  @State var runningSegment: TimeSegment?
 
   var body: some View {
     NavigationSplitView {
@@ -49,6 +50,12 @@ struct ContentView: View {
       .sheet(isPresented: $showSheet) {
         AddNewClockView()
       }
+      .sheet(item: $runningSegment) { segment in
+        RunningSegmentView(segment: segment)
+      }
+      .onAppear {
+        checkForRunningTimeSegments()
+      }
     } detail: {
       Text("Select an item")
     }
@@ -64,6 +71,12 @@ struct ContentView: View {
 
   private func addItem() {
     showSheet.toggle()
+  }
+
+  private func checkForRunningTimeSegments() {
+    // Only check the first time app launches
+    guard runningSegment == nil else { return }
+    runningSegment = globalModel.findRunningTimeSegment()
   }
 }
 

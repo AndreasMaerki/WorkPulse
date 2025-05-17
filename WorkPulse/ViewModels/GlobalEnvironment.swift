@@ -18,7 +18,7 @@ class GlobalEnvironment {
   private var timer: Timer?
   var elapsedTime: TimeInterval = 0
   private var modelContext: ModelContext?
-  private var persistenceManager: PersistenceManager
+  var persistenceManager: PersistenceManager
 
   init(modelContext: ModelContext? = nil) {
     self.modelContext = modelContext
@@ -38,22 +38,42 @@ class GlobalEnvironment {
     }
   }
 
-  func startTimer(_ clock: Clock) {
+  func findRunningTimeSegment() -> TimeSegment? {
+    for clock in clocks {
+      if let segment = clock.timeSegments.first(where: { $0.isRunning }),
+         segment.id != activeTimeSegment?.id
+      {
+        return segment
+      }
+    }
+    return nil
+  }
+
+  func startTimer(_ clock: Clock, segment: TimeSegment? = nil) {
     // Stop any running timer and set its end time
-    if let activeTimeSegment {
+    if let activeTimeSegment, activeTimeSegment.id != segment?.id {
       activeTimeSegment.endTime = Date()
       activeTimeSegment.isRunning = false
     }
     stopTimer()
 
-    let newTimeSegment = TimeSegment(
-      startTime: Date(),
-      clock: clock
-    )
-    newTimeSegment.isRunning = true
-    clock.timeSegments.append(newTimeSegment)
+    let timeSegment: TimeSegment
+    if let segment {
+      // Continue with existing segment
+      timeSegment = segment
+      timeSegment.isRunning = true
+    } else {
+      // Create new segment
+      timeSegment = TimeSegment(
+        startTime: Date(),
+        clock: clock
+      )
+      timeSegment.isRunning = true
+      clock.timeSegments.append(timeSegment)
+    }
+
     activeClock = clock
-    activeTimeSegment = newTimeSegment
+    activeTimeSegment = timeSegment
 
     // Start new timer for UI updates (every second)
     timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
@@ -127,8 +147,4 @@ class GlobalEnvironment {
   func totalTimeForName(_ name: String) -> TimeInterval {
     clocks.first(where: { $0.name == name })?.elapsedTime() ?? 0
   }
-
-//  deinit {
-//    stopTimer()
-//  }
 }
