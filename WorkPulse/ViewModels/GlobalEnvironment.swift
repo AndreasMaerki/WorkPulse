@@ -145,4 +145,11 @@ class GlobalEnvironment {
   func persistData() {
     persistenceManager.persistData()
   }
+
+  func updateClock(_ clock: Clock, name: String, color: Color, notes: String?) {
+    clock.name = name
+    clock.color = color
+    clock.notes = notes
+    persistenceManager.persistData()
+  }
 }

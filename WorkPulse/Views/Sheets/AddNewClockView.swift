@@ -1,12 +1,25 @@
 import SwiftUI
 
-struct AddNewClockView: View {
+struct ClockFormView: View {
   @Environment(GlobalEnvironment.self) private var viewModel
   @Environment(\.dismiss) var dismiss
 
-  @State private var name = ""
-  @State private var color: Color = .green
-  @State private var notes = ""
+  let clock: Clock?
+  let onSave: (String, Color, String?) -> Void
+
+  @State private var name: String
+  @State private var color: Color
+  @State private var notes: String
+
+  init(clock: Clock? = nil, onSave: @escaping (String, Color, String?) -> Void) {
+    self.clock = clock
+    self.onSave = onSave
+
+    // Initialize state with clock values if editing, or defaults if creating
+    _name = State(initialValue: clock?.name ?? "")
+    _color = State(initialValue: clock?.color ?? .green)
+    _notes = State(initialValue: clock?.notes ?? "")
+  }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 24) {
@@ -14,7 +27,7 @@ struct AddNewClockView: View {
         Image(systemName: "plus.circle.fill")
           .font(.title)
           .foregroundStyle(color)
-        Text("Add new clock")
+        Text(clock == nil ? "Add new clock" : "Edit clock")
           .font(.title2)
           .fontWeight(.semibold)
       }
@@ -59,12 +72,12 @@ struct AddNewClockView: View {
         .tint(.red)
 
         Button {
-          viewModel.addClock(name, color, note: notes.isEmpty ? nil : notes)
+          onSave(name, color, notes.isEmpty ? nil : notes)
           dismiss()
         } label: {
           HStack {
-            Image(systemName: "plus.circle.fill")
-            Text("Add Clock")
+            Image(systemName: clock == nil ? "plus.circle.fill" : "checkmark.circle.fill")
+            Text(clock == nil ? "Add Clock" : "Save Changes")
           }
         }
         .buttonStyle(.borderedProminent)
@@ -80,6 +93,8 @@ struct AddNewClockView: View {
 }
 
 #Preview {
-  AddNewClockView()
-    .environment(GlobalEnvironment())
+  ClockFormView { name, color, notes in
+    print("Creating clock: \(name), \(color), \(notes ?? "no notes")")
+  }
+  .environment(GlobalEnvironment())
 }

@@ -8,6 +8,7 @@ struct ContentView: View {
 
   @State var showSheet = false
   @State var runningSegment: TimeSegment?
+  @State var editingClock: Clock?
 
   var body: some View {
     NavigationSplitView {
@@ -22,6 +23,19 @@ struct ContentView: View {
         Section(header: Text("Clocks")) {
           ForEach(globalModel.clocks) { clock in
             ClockRowView(clock: clock)
+              .contextMenu {
+                Button {
+                  editingClock = clock
+                } label: {
+                  Label("Edit Clock", systemImage: "pencil")
+                }
+
+                Button(role: .destructive) {
+                  globalModel.deleteClock(clock)
+                } label: {
+                  Label("Delete", systemImage: "trash")
+                }
+              }
               .swipeActions(edge: .trailing) {
                 Button(role: .destructive) {
                   globalModel.deleteClock(clock)
@@ -48,7 +62,14 @@ struct ContentView: View {
         }
       }
       .sheet(isPresented: $showSheet) {
-        AddNewClockView()
+        ClockFormView { name, color, notes in
+          globalModel.addClock(name, color, note: notes)
+        }
+      }
+      .sheet(item: $editingClock) { clock in
+        ClockFormView(clock: clock) { name, color, notes in
+          globalModel.updateClock(clock, name: name, color: color, notes: notes)
+        }
       }
       .sheet(item: $runningSegment) { segment in
         RunningSegmentView(segment: segment)
