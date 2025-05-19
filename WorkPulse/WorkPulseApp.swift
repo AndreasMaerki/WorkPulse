@@ -27,7 +27,7 @@ struct WorkPulseApp: App {
   }
 
   var body: some Scene {
-    WindowGroup {
+    WindowGroup(id: "WorkPulse") {
       ContentView()
         .environment(globalEnvironment)
     }

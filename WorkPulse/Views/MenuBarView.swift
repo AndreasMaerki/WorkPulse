@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MenuBarView: View {
   @Environment(GlobalEnvironment.self) private var globalEnvironment
-
+  @Environment(\.openWindow) var openWindow
   var body: some View {
     VStack(spacing: 12) {
       // Total time section
@@ -52,23 +52,8 @@ struct MenuBarView: View {
       // Actions section
       VStack(spacing: 8) {
         Button("Open WorkPulse") {
-          if let window = NSApplication.shared.windows.first(where: { $0.title == "WorkPulse" }) {
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-          } else {
-            // Create a new window if none exists
-            let window = NSWindow(
-              contentRect: NSRect(x: 0, y: 0, width: 800, height: 600),
-              styleMask: [.titled, .closable, .miniaturizable, .resizable],
-              backing: .buffered,
-              defer: false
-            )
-            window.title = "WorkPulse"
-            window.center()
-            window.contentView = NSHostingView(rootView: ContentView().environment(globalEnvironment))
-            window.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-          }
+          NSApplication.shared.activate(ignoringOtherApps: true)
+          openWindow(id: "WorkPulse")
         }
         .buttonStyle(.plain)
 
