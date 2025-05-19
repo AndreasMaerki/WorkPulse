@@ -32,5 +32,11 @@ struct WorkPulseApp: App {
         .environment(globalEnvironment)
     }
     .modelContainer(sharedModelContainer)
+
+    MenuBarExtra("WorkPulse", systemImage: "clock") {
+      MenuBarView()
+        .environment(globalEnvironment)
+    }
+    .menuBarExtraStyle(.window)
   }
 }
