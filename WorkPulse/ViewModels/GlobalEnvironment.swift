@@ -97,8 +97,8 @@ class GlobalEnvironment {
     persistenceManager.stopPersistenceTimer()
   }
 
-  func addClock(_ name: String, _ color: Color) {
-    let clock = Clock(name: name, color: color)
+  func addClock(_ name: String, _ color: Color, note: String? = nil) {
+    let clock = Clock(name: name, color: color, notes: note)
     modelContext?.insert(clock)
     clocks.append(clock)
     persistenceManager.persistData()

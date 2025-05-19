@@ -22,6 +22,7 @@ final class ColorComponents {
 final class Clock {
   var id: UUID
   var name: String
+  var notes: String?
   @Relationship var colorComponents: ColorComponents
   @Relationship(deleteRule: .cascade, inverse: \TimeSegment.clock) var timeSegments: [TimeSegment] = []
 
@@ -49,9 +50,10 @@ final class Clock {
     timeSegments.sorted { $0.startTime < $1.startTime }
   }
 
-  init(id: UUID = UUID(), name: String, color: Color) {
+  init(id: UUID = UUID(), name: String, color: Color, notes: String? = nil) {
     self.id = id
     self.name = name
+    self.notes = notes
     if let components = color.components {
       colorComponents = ColorComponents(
         red: components.red,
