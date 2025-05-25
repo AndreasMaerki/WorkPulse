@@ -132,9 +132,16 @@ struct SettingsView: View {
         .font(.headline)
 
       VStack(alignment: .leading, spacing: 8) {
-        Text("Minimum Time Segment Duration")
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+        HStack {
+          Text("Minimum Time Segment Duration")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+
+          Image(systemName: "questionmark.circle")
+            .foregroundStyle(.secondary)
+            .frame(width: 24, height: 24)
+            .help("Time segments shorter than this duration will be automatically removed when stopping the clock. This helps prevent accidental short segments from being recorded.")
+        }
 
         HStack {
           Slider(
