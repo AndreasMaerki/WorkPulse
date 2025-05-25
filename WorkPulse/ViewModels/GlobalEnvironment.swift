@@ -20,9 +20,22 @@ class GlobalEnvironment {
   private var modelContext: ModelContext?
   private var persistenceManager: PersistenceManager
 
+  var minimumTimeSegmentDuration: TimeInterval {
+    get {
+      UserDefaults.standard.double(forKey: "minimumTimeSegmentDuration")
+    }
+    set {
+      UserDefaults.standard.set(newValue, forKey: "minimumTimeSegmentDuration")
+    }
+  }
+
   init(modelContext: ModelContext? = nil) {
     self.modelContext = modelContext
     persistenceManager = PersistenceManager(modelContext: modelContext)
+    // Set default minimum duration if not already set
+    if UserDefaults.standard.double(forKey: "minimumTimeSegmentDuration") == 0 {
+      minimumTimeSegmentDuration = 30 // 30 seconds default
+    }
     loadClocks()
   }
 
@@ -86,15 +99,29 @@ class GlobalEnvironment {
 
   func stopTimer() {
     updateTime()
-    if let activeTimeSegment {
-      activeTimeSegment.isRunning = false
-    }
+    checkMinimumDuration()
     activeTimeSegment = nil
     activeClock = nil
     uiTimer?.invalidate()
     uiTimer = nil
 
     persistenceManager.stopPersistenceTimer()
+  }
+
+  private func checkMinimumDuration() {
+    if let activeTimeSegment {
+      let duration = Date().timeIntervalSince(activeTimeSegment.startTime)
+      if duration < minimumTimeSegmentDuration {
+        if let clock = activeTimeSegment.clock,
+           let index = clock.timeSegments.firstIndex(where: { $0.id == activeTimeSegment.id })
+        {
+          clock.timeSegments.remove(at: index)
+          modelContext?.delete(activeTimeSegment)
+        }
+      } else {
+        activeTimeSegment.isRunning = false
+      }
+    }
   }
 
   func addClock(_ name: String, _ color: Color, note: String? = nil) {

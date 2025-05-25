@@ -8,6 +8,12 @@ struct SettingsView: View {
   @State private var showResetAlert = false
   @State private var showExportDialog = false
   @State private var exportDocument: ClockCSVDocument?
+  @State private var minimumDuration: Double
+
+  init() {
+    // Initialize with the current value from UserDefaults
+    _minimumDuration = State(initialValue: UserDefaults.standard.double(forKey: "minimumTimeSegmentDuration"))
+  }
 
   var body: some View {
     ScrollView {
@@ -26,57 +32,8 @@ struct SettingsView: View {
           .buttonStyle(.bordered)
         }
 
-        VStack(alignment: .leading, spacing: 16) {
-          Text("Clock Management")
-            .font(.headline)
-
-          ForEach(viewModel.clocks) { clock in
-            HStack {
-              Circle()
-                .fill(clock.color)
-                .frame(width: 12, height: 12)
-
-              Text(clock.name)
-                .foregroundStyle(.secondary)
-
-              Spacer()
-
-              Text(clock.elapsedTime().formattedHHMMSS())
-                .monospacedDigit()
-
-              Menu {
-                Button(role: .destructive) {
-                  selectedClock = clock
-                  showDeleteAlert = true
-                } label: {
-                  Label("Delete", systemImage: "trash")
-                }
-
-                Button {
-                  selectedClock = clock
-                  showResetAlert = true
-                } label: {
-                  Label("Reset", systemImage: "arrow.counterclockwise")
-                }
-
-                Button {
-                  prepareExport(for: clock)
-                } label: {
-                  Label("Export CSV", systemImage: "square.and.arrow.up")
-                }
-              } label: {
-                Image(systemName: "ellipsis.circle")
-                  .foregroundStyle(.secondary)
-                  .frame(width: 24, height: 24)
-              }
-              .menuStyle(.borderlessButton)
-              .fixedSize()
-            }
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .cornerRadius(8)
-          }
-        }
+        clockManagementSection
+        timeSegmentSettingsSection
       }
       .padding()
     }
@@ -112,6 +69,92 @@ struct SettingsView: View {
       case let .failure(error):
         print(error.localizedDescription)
       }
+    }
+  }
+
+  private var clockManagementSection: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Clock Management")
+        .font(.headline)
+
+      ForEach(viewModel.clocks) { clock in
+        HStack {
+          Circle()
+            .fill(clock.color)
+            .frame(width: 12, height: 12)
+
+          Text(clock.name)
+            .foregroundStyle(.secondary)
+
+          Spacer()
+
+          Text(clock.elapsedTime().formattedHHMMSS())
+            .monospacedDigit()
+
+          Menu {
+            Button(role: .destructive) {
+              selectedClock = clock
+              showDeleteAlert = true
+            } label: {
+              Label("Delete", systemImage: "trash")
+            }
+
+            Button {
+              selectedClock = clock
+              showResetAlert = true
+            } label: {
+              Label("Reset", systemImage: "arrow.counterclockwise")
+            }
+
+            Button {
+              prepareExport(for: clock)
+            } label: {
+              Label("Export CSV", systemImage: "square.and.arrow.up")
+            }
+          } label: {
+            Image(systemName: "ellipsis.circle")
+              .foregroundStyle(.secondary)
+              .frame(width: 24, height: 24)
+          }
+          .menuStyle(.borderlessButton)
+          .fixedSize()
+        }
+        .padding()
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(8)
+      }
+    }
+  }
+
+  private var timeSegmentSettingsSection: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Time Segment Settings")
+        .font(.headline)
+
+      VStack(alignment: .leading, spacing: 8) {
+        Text("Minimum Time Segment Duration")
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+
+        HStack {
+          Slider(
+            value: $minimumDuration,
+            in: 0 ... 300,
+            step: 10
+          )
+          .frame(width: 200)
+          .onChange(of: minimumDuration) { _, newValue in
+            viewModel.minimumTimeSegmentDuration = newValue
+          }
+
+          Text("\(Int(minimumDuration)) seconds")
+            .monospacedDigit()
+            .foregroundStyle(.secondary)
+        }
+      }
+      .padding()
+      .background(Color.gray.opacity(0.1))
+      .cornerRadius(8)
     }
   }
 
