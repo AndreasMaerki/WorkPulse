@@ -116,6 +116,15 @@ class GlobalEnvironment {
     updateTime()
   }
 
+  func resetClock(_ clock: Clock) {
+    if activeClock?.id == clock.id {
+      stopTimer()
+    }
+    clock.timeSegments.removeAll()
+    persistenceManager.persistData()
+    updateTime()
+  }
+
   func deleteTimeSegment(_ segment: TimeSegment, from clock: Clock) {
     if activeTimeSegment?.id == segment.id {
       stopTimer()

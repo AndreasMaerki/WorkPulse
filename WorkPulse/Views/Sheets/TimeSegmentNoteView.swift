@@ -63,7 +63,7 @@ struct TimeSegmentNoteView: View {
     .padding()
     .frame(width: 300)
     .alert("Invalid Time Range", isPresented: $showInvalidTimeAlert) {
-      Button("OK", role: .cancel) { }
+      Button("OK", role: .cancel) {}
     } message: {
       Text("End time must be after start time.")
     }

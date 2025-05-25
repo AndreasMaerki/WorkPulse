@@ -47,7 +47,7 @@ struct ContentView: View {
         }
         Section(header: Text("More")) {
           NavigationLink {
-            Text("Settings")
+            SettingsView()
           } label: {
             settings
           }
