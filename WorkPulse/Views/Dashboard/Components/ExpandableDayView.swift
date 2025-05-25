@@ -15,6 +15,18 @@ struct ExpandableDayView: View {
     }
   }
 
+  private var listHeight: CGFloat {
+    let baseHeight: CGFloat = 24 // Base height for each segment
+    let noteHeight: CGFloat = 32 // Extra height for segments with notes
+    let maxHeight: CGFloat = 300 // Maximum height of the list
+
+    let totalHeight = segments.reduce(0) { result, segment in
+      result + baseHeight + (segment.note != nil ? noteHeight : 0)
+    }
+
+    return min(totalHeight, maxHeight)
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Button(action: { isExpanded.toggle() }) {
@@ -32,6 +44,7 @@ struct ExpandableDayView: View {
             .rotationEffect(.degrees(isExpanded ? 90 : 0))
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
 
@@ -78,7 +91,7 @@ struct ExpandableDayView: View {
         }
         .scrollContentBackground(.hidden)
         .listStyle(.plain)
-        .frame(height: min(CGFloat(segments.count * 24), 300))
+        .frame(height: listHeight)
       }
     }
     .padding(8)

@@ -23,6 +23,7 @@ struct ClockHeaderView: View {
             .rotationEffect(.degrees(isExpanded ? 90 : 0))
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
 

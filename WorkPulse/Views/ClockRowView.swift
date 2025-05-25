@@ -26,6 +26,7 @@ struct ClockRowView: View {
           Text(clock.name)
         }
       }
+      .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
     .background(Color.secondary.opacity(0.1).cornerRadius(4))
