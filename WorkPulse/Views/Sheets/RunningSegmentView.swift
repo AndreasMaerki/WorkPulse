@@ -26,7 +26,7 @@ struct RunningSegmentView: View {
         }
       }
 
-      Text("Started: \(segment.startTime.formatted(date: .abbreviated, time: .shortened))")
+      Text("Started: \(segment.startTime.shortDateTimeString)")
         .foregroundStyle(.secondary)
 
       Text("Elapsed: \(segment.elapsedTime(refTime: Date()).formattedHHMMSS())")

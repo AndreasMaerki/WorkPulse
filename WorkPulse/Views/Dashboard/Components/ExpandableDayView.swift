@@ -40,11 +40,11 @@ struct ExpandableDayView: View {
           ForEach(segments) { segment in
             VStack(alignment: .leading, spacing: 4) {
               HStack {
-                Text(segment.startTime.formatted(date: .omitted, time: .shortened))
+                Text(segment.startTime.shortTimeString)
                   .foregroundStyle(.secondary)
                 Text("-")
                   .foregroundStyle(.secondary)
-                Text((segment.isRunning ? "Running" : segment.endTime?.formatted(date: .omitted, time: .shortened) ?? ""))
+                Text((segment.isRunning ? "Running" : segment.endTime?.shortTimeString ?? ""))
                   .foregroundStyle(.secondary)
                 Spacer()
                 Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())

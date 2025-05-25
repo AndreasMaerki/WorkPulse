@@ -26,4 +26,24 @@ extension Date {
     formatter.dateStyle = .full
     return formatter.string(from: self)
   }
+
+  var shortTimeString: String {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .none
+    formatter.timeStyle = .short
+    return formatter.string(from: self)
+  }
+
+  var shortDateTimeString: String {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .short
+    return formatter.string(from: self)
+  }
+
+  var hourMinuteString: String {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH:mm"
+    return formatter.string(from: self)
+  }
 }

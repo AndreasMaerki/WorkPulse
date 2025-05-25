@@ -171,18 +171,16 @@ struct ClockCSVDocument: FileDocument {
   }
 
   func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-    var csvString = "Clock,Start Date,Start Time,End Date,End Time,Duration,Notes\n"
-
-    for segment in segments {
-      let startDate = segment.startTime.formatted(date: .numeric, time: .omitted)
-      let startTime = segment.startTime.formatted(date: .omitted, time: .shortened)
+    let csvString = "Clock,Start Date,Start Time,End Date,End Time,Duration,Notes\n" + segments.map { segment in
+      let startDate = segment.startTime.shortDateTimeString
+      let startTime = segment.startTime.shortTimeString
 
       let endDate: String
       let endTime: String
 
       if let endTimeDate = segment.endTime {
-        endDate = endTimeDate.formatted(date: .numeric, time: .omitted)
-        endTime = endTimeDate.formatted(date: .omitted, time: .shortened)
+        endDate = endTimeDate.shortDateTimeString
+        endTime = endTimeDate.shortTimeString
       } else {
         endDate = "Running"
         endTime = "Running"
@@ -191,8 +189,8 @@ struct ClockCSVDocument: FileDocument {
       let duration = segment.endTime.map { $0.timeIntervalSince(segment.startTime) } ?? 0
       let notes = segment.note ?? ""
 
-      csvString += "\(segment.clockName),\(startDate),\(startTime),\(endDate),\(endTime),\(duration.formattedHHMMSS()),\(notes)\n"
-    }
+      return "\(segment.clockName),\(startDate),\(startTime),\(endDate),\(endTime),\(duration.formattedHHMMSS()),\(notes)"
+    }.joined(separator: "\n")
 
     guard let data = csvString.data(using: .utf8) else {
       throw CocoaError(.fileWriteUnknown)
