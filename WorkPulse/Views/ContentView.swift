@@ -78,7 +78,7 @@ struct ContentView: View {
         checkForRunningTimeSegments()
       }
     } detail: {
-      Text("Select an item")
+      DashboardView()
     }
   }
 
