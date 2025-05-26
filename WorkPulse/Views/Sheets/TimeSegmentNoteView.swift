@@ -50,12 +50,7 @@ struct TimeSegmentNoteView: View {
         Spacer()
 
         Button("Save") {
-          if isTimeValid {
-            save()
-            dismiss()
-          } else {
-            showInvalidTimeAlert = true
-          }
+          saveAction()
         }
         .buttonStyle(.borderedProminent)
       }
@@ -90,6 +85,15 @@ struct TimeSegmentNoteView: View {
       DatePicker("", selection: $selectedEndTime)
         .datePickerStyle(.compact)
         .labelsHidden()
+    }
+  }
+
+  private func saveAction() {
+    if isTimeValid {
+      save()
+      dismiss()
+    } else {
+      showInvalidTimeAlert = true
     }
   }
 

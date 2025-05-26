@@ -29,64 +29,12 @@ struct ExpandableDayView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Button(action: { isExpanded.toggle() }) {
-        HStack {
-          Text(dayName)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-          Spacer()
-          Text(totalDayTime.formattedHHMMSS())
-            .font(.subheadline)
-            .monospacedDigit()
-            .foregroundStyle(.primary)
-          Image(systemName: "chevron.right")
-            .foregroundStyle(.secondary)
-            .rotationEffect(.degrees(isExpanded ? 90 : 0))
-        }
-        .padding(.vertical, 4)
-        .contentShape(Rectangle())
-      }
-      .buttonStyle(.plain)
+      dayOpeningButton
 
       if isExpanded {
         List {
           ForEach(segments) { segment in
-            VStack(alignment: .leading, spacing: 4) {
-              HStack {
-                Text(segment.startTime.shortTimeString)
-                  .foregroundStyle(.secondary)
-                Text("-")
-                  .foregroundStyle(.secondary)
-                Text((segment.isRunning ? "Running" : segment.endTime?.shortTimeString ?? ""))
-                  .foregroundStyle(.secondary)
-                Spacer()
-                Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
-                  .monospacedDigit()
-              }
-              .font(.footnote)
-
-              if let note = segment.note {
-                Text(note)
-                  .font(.caption)
-                  .foregroundStyle(.secondary)
-                  .lineLimit(2)
-                  .padding(.leading)
-              }
-            }
-            .listRowInsets(EdgeInsets(top: 4, leading: 24, bottom: 4, trailing: 8))
-            .onTapGesture(count: 2) {
-              selectedSegment = segment
-              showNoteEditor = true
-            }
-            .swipeActions(edge: .trailing) {
-              Button(role: .destructive) {
-                if let clock = segment.clock {
-                  viewModel.deleteTimeSegment(segment, from: clock)
-                }
-              } label: {
-                Label("Delete", systemImage: "trash")
-              }
-            }
+            timeSegment(segment)
           }
         }
         .scrollContentBackground(.hidden)
@@ -101,6 +49,74 @@ struct ExpandableDayView: View {
       if let segment = selectedSegment {
         TimeSegmentNoteView(segment: segment)
       }
+    }
+  }
+
+  private var dayOpeningButton: some View {
+    Button(action: { isExpanded.toggle() }) {
+      HStack {
+        Text(dayName)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        Spacer()
+        Text(totalDayTime.formattedHHMMSS())
+          .font(.subheadline)
+          .monospacedDigit()
+          .foregroundStyle(.primary)
+        Image(systemName: "chevron.right")
+          .foregroundStyle(.secondary)
+          .rotationEffect(.degrees(isExpanded ? 90 : 0))
+      }
+      .padding(.vertical, 4)
+      .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+  }
+
+  private func timeSegment(_ segment: TimeSegment) -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      HStack {
+        Text(segment.startTime.shortTimeString)
+          .foregroundStyle(.secondary)
+        Text("-")
+          .foregroundStyle(.secondary)
+        Text((segment.isRunning ? "Running" : segment.endTime?.shortTimeString ?? ""))
+          .foregroundStyle(.secondary)
+        Spacer()
+        Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
+          .monospacedDigit()
+      }
+      .font(.footnote)
+
+      if let note = segment.note {
+        Text(note)
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .lineLimit(2)
+          .padding(.leading)
+      }
+    }
+    .listRowInsets(EdgeInsets(top: 4, leading: 24, bottom: 4, trailing: 8))
+    .onTapGesture(count: 2) {
+      handleSegmentDoubleTap(segment)
+    }
+    .swipeActions(edge: .trailing) {
+      Button(role: .destructive) {
+        deleteTimeSegment(segment)
+      } label: {
+        Label("Delete", systemImage: "trash")
+      }
+    }
+  }
+
+  private func handleSegmentDoubleTap(_ segment: TimeSegment) {
+    selectedSegment = segment
+    showNoteEditor = true
+  }
+
+  private func deleteTimeSegment(_ segment: TimeSegment) {
+    if let clock = segment.clock {
+      viewModel.deleteTimeSegment(segment, from: clock)
     }
   }
 }

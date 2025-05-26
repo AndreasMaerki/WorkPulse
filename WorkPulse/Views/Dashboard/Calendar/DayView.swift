@@ -27,9 +27,9 @@ struct DayView: View {
             }
             .padding(.horizontal)
             .onAppear {
-              // Scroll to 6:00 AM
+              // Scroll to 7:00 AM
               withAnimation {
-                proxy.scrollTo(6, anchor: .top)
+                proxy.scrollTo(7, anchor: .top)
               }
             }
           }

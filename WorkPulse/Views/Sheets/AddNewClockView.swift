@@ -76,12 +76,7 @@ struct AddNewClockView: View {
         .tint(.red)
 
         Button {
-          if isEditing, let clock {
-            viewModel.updateClock(clock, name: name, color: color, notes: notes.isEmpty ? nil : notes)
-          } else {
-            viewModel.addClock(name, color, note: notes.isEmpty ? nil : notes)
-          }
-          dismiss()
+          saveAction()
         } label: {
           HStack {
             Image(systemName: isEditing ? "checkmark.circle.fill" : "plus.circle.fill")
@@ -97,6 +92,15 @@ struct AddNewClockView: View {
     .padding(24)
     .frame(width: 400)
     .background(Color(NSColor.windowBackgroundColor))
+  }
+
+  private func saveAction() {
+    if isEditing, let clock {
+      viewModel.updateClock(clock, name: name, color: color, notes: notes.isEmpty ? nil : notes)
+    } else {
+      viewModel.addClock(name, color, note: notes.isEmpty ? nil : notes)
+    }
+    dismiss()
   }
 }
 

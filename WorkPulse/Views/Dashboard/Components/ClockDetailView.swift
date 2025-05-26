@@ -6,16 +6,6 @@ struct ClockDetailView: View {
   @Environment(GlobalEnvironment.self) private var viewModel
   @State private var expandedDay: Date?
 
-  private func groupSegmentsByDay() -> [(Date, String, [TimeSegment])] {
-    let calendar = Calendar.current
-    let grouped = Dictionary(grouping: clock.sortedTimeSegments) { segment in
-      calendar.startOfDay(for: segment.startTime)
-    }
-    return grouped.sorted { $0.key > $1.key }
-      .map { ($0.key.formattedForTimeSegment(), $0.value.sorted(by: { $0.startTime > $1.startTime })) }
-      .map { (calendar.startOfDay(for: $0.1.first?.startTime ?? Date()), $0.0, $0.1) }
-  }
-
   var body: some View {
     VStack(spacing: 0) {
       ClockHeaderView(
@@ -33,5 +23,15 @@ struct ClockDetailView: View {
         .transition(.move(edge: .top).combined(with: .opacity))
       }
     }
+  }
+
+  private func groupSegmentsByDay() -> [(Date, String, [TimeSegment])] {
+    let calendar = Calendar.current
+    let grouped = Dictionary(grouping: clock.sortedTimeSegments) { segment in
+      calendar.startOfDay(for: segment.startTime)
+    }
+    return grouped.sorted { $0.key > $1.key }
+      .map { ($0.key.formattedForTimeSegment(), $0.value.sorted(by: { $0.startTime > $1.startTime })) }
+      .map { (calendar.startOfDay(for: $0.1.first?.startTime ?? Date()), $0.0, $0.1) }
   }
 }

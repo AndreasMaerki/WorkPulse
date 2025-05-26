@@ -56,7 +56,7 @@ struct ContentView: View {
       .navigationSplitViewColumnWidth(min: 180, ideal: 200)
       .toolbar {
         ToolbarItem {
-          Button(action: addItem) {
+          Button(action: { showSheet.toggle() }) {
             Label("Add Item", systemImage: "plus")
           }
         }
@@ -84,10 +84,6 @@ struct ContentView: View {
     } label: {
       Text("Settings")
     }
-  }
-
-  private func addItem() {
-    showSheet.toggle()
   }
 
   private func checkForRunningTimeSegments() {

@@ -40,9 +40,7 @@ struct SettingsView: View {
     .alert("Delete Clock", isPresented: $showDeleteAlert) {
       Button("Cancel", role: .cancel) {}
       Button("Delete", role: .destructive) {
-        if let clock = selectedClock {
-          viewModel.deleteClock(clock)
-        }
+        deleteSelectedClock()
       }
     } message: {
       Text("Are you sure you want to delete this clock? This action cannot be undone.")
@@ -50,9 +48,7 @@ struct SettingsView: View {
     .alert("Reset Clock", isPresented: $showResetAlert) {
       Button("Cancel", role: .cancel) {}
       Button("Reset", role: .destructive) {
-        if let clock = selectedClock {
-          viewModel.resetClock(clock)
-        }
+        resetSelectedClock()
       }
     } message: {
       Text("Are you sure you want to reset this clock? All time segments will be deleted.")
@@ -63,12 +59,7 @@ struct SettingsView: View {
       contentType: .commaSeparatedText,
       defaultFilename: exportDocument?.clockName ?? "clock_export"
     ) { result in
-      switch result {
-      case let .success(url):
-        print("Saved to \(url)")
-      case let .failure(error):
-        print(error.localizedDescription)
-      }
+      handleExportResult(result)
     }
   }
 
@@ -93,15 +84,13 @@ struct SettingsView: View {
 
           Menu {
             Button(role: .destructive) {
-              selectedClock = clock
-              showDeleteAlert = true
+              showDeleteConfirmation(for: clock)
             } label: {
               Label("Delete", systemImage: "trash")
             }
 
             Button {
-              selectedClock = clock
-              showResetAlert = true
+              showResetConfirmation(for: clock)
             } label: {
               Label("Reset", systemImage: "arrow.counterclockwise")
             }
@@ -165,6 +154,39 @@ struct SettingsView: View {
     }
   }
 
+  // MARK: - Private Actions
+
+  private func showDeleteConfirmation(for clock: Clock) {
+    selectedClock = clock
+    showDeleteAlert = true
+  }
+
+  private func showResetConfirmation(for clock: Clock) {
+    selectedClock = clock
+    showResetAlert = true
+  }
+
+  private func deleteSelectedClock() {
+    if let clock = selectedClock {
+      viewModel.deleteClock(clock)
+    }
+  }
+
+  private func resetSelectedClock() {
+    if let clock = selectedClock {
+      viewModel.resetClock(clock)
+    }
+  }
+
+  private func handleExportResult(_ result: Result<URL, Error>) {
+    switch result {
+    case let .success(url):
+      print("Saved to \(url)")
+    case let .failure(error):
+      print(error.localizedDescription)
+    }
+  }
+
   private func prepareExport(for clock: Clock) {
     exportDocument = ClockCSVDocument(clock: clock)
     showExportDialog = true
@@ -202,7 +224,7 @@ struct ClockCSVDocument: FileDocument {
   }
 
   init(clocks: [Clock]) {
-    clockName = "all clocks"
+    clockName = "All Clocks"
     segments = clocks.flatMap { clock in
       clock.timeSegments.map { segment in
         TimeSegmentData(
@@ -221,32 +243,14 @@ struct ClockCSVDocument: FileDocument {
   }
 
   func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-    let csvString = "Clock,Start Date,Start Time,End Date,End Time,Duration,Notes\n" + segments.map { segment in
-      let startDate = segment.startTime.shortDateTimeString
-      let startTime = segment.startTime.shortTimeString
-
-      let endDate: String
-      let endTime: String
-
-      if let endTimeDate = segment.endTime {
-        endDate = endTimeDate.shortDateTimeString
-        endTime = endTimeDate.shortTimeString
-      } else {
-        endDate = "Running"
-        endTime = "Running"
-      }
-
-      let duration = segment.endTime.map { $0.timeIntervalSince(segment.startTime) } ?? 0
-      let notes = segment.note ?? ""
-
-      return "\(segment.clockName),\(startDate),\(startTime),\(endDate),\(endTime),\(duration.formattedHHMMSS()),\(notes)"
-    }.joined(separator: "\n")
-
-    guard let data = csvString.data(using: .utf8) else {
-      throw CocoaError(.fileWriteUnknown)
+    let header = "Clock Name,Start Time,End Time,Note\n"
+    let rows = segments.map { segment in
+      let endTime = segment.endTime?.formatted(date: .numeric, time: .standard) ?? "Running"
+      let note = segment.note?.replacingOccurrences(of: ",", with: ";") ?? ""
+      return "\(segment.clockName),\(segment.startTime.formatted(date: .numeric, time: .standard)),\(endTime),\(note)"
     }
-
-    return FileWrapper(regularFileWithContents: data)
+    let content = header + rows.joined(separator: "\n")
+    return FileWrapper(regularFileWithContents: content.data(using: .utf8)!)
   }
 }
 

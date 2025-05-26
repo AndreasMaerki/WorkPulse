@@ -25,30 +25,7 @@ struct WeekView: View {
         navigationHeader
           .padding()
 
-        // Fixed header row
-        HStack(alignment: .top, spacing: 0) {
-          Rectangle()
-            .fill(.clear)
-            .frame(width: hourLabelWidth, height: 12)
-
-          HStack(spacing: 0) {
-            ForEach(daysOfWeek.indices, id: \.self) { index in
-              let date = daysOfWeek[index]
-              Text(date, format: .dateTime.weekday(.abbreviated).day())
-                .frame(width: dayWidth)
-                .padding(.bottom, 8)
-
-              if index < 6 {
-                Rectangle()
-                  .fill(Color.gray.opacity(0.2))
-                  .frame(width: 1)
-                  .frame(height: 12)
-              }
-            }
-          }
-        }
-        .padding(.horizontal)
-        .background(.background)
+        dateLabels(dayWidth: dayWidth, daysOfWeek: daysOfWeek)
 
         ScrollView {
           ScrollViewReader { proxy in
@@ -71,15 +48,41 @@ struct WeekView: View {
             }
             .padding()
             .onAppear {
-              // Scroll to 6:00 AM
+              // Scroll to 7:00 AM
               withAnimation {
-                proxy.scrollTo(6, anchor: .top)
+                proxy.scrollTo(7, anchor: .top)
               }
             }
           }
         }
       }
     }
+  }
+
+  fileprivate func dateLabels(dayWidth: CGFloat, daysOfWeek: [Date]) -> some View {
+    HStack(alignment: .top, spacing: 0) {
+      Rectangle()
+        .fill(.clear)
+        .frame(width: hourLabelWidth, height: 12)
+
+      HStack(spacing: 0) {
+        ForEach(daysOfWeek.indices, id: \.self) { index in
+          let date = daysOfWeek[index]
+          Text(date, format: .dateTime.weekday(.abbreviated).day())
+            .frame(width: dayWidth)
+            .padding(.bottom, 8)
+
+          if index < 6 {
+            Rectangle()
+              .fill(Color.gray.opacity(0.2))
+              .frame(width: 1)
+              .frame(height: 12)
+          }
+        }
+      }
+    }
+    .padding(.horizontal)
+    .background(.background)
   }
 
   private var navigationHeader: some View {

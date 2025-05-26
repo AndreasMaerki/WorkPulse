@@ -44,15 +44,7 @@ struct DashboardView: View {
             PieChartView()
               .frame(width: 120, height: 120)
 
-            Button {
-              showCalendar = true
-            } label: {
-              Image(systemName: "calendar")
-                .font(.title2)
-                .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .help("View time segments in calendar")
+            calendarButton
           }
 
           Spacer()
@@ -65,17 +57,7 @@ struct DashboardView: View {
             .font(.headline)
 
           ForEach(viewModel.clocks) { clock in
-            ClockDetailView(
-              clock: clock,
-              isExpanded: Binding(
-                get: { expandedClockId == clock.id },
-                set: { isExpanded in
-                  withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    expandedClockId = isExpanded ? clock.id : nil
-                  }
-                }
-              )
-            )
+            detailViewWithAnimation(clock)
           }
         }
         .padding()
@@ -91,6 +73,32 @@ struct DashboardView: View {
         .environment(CalendarViewModel(events: calendarEvents))
         .frame(minWidth: 800, minHeight: 600)
     }
+  }
+
+  private var calendarButton: some View {
+    Button {
+      showCalendar = true
+    } label: {
+      Image(systemName: "calendar")
+        .font(.title2)
+        .foregroundStyle(.secondary)
+    }
+    .buttonStyle(.plain)
+    .help("View time segments in calendar")
+  }
+
+  private func detailViewWithAnimation(_ clock: Clock) -> some View {
+    ClockDetailView(
+      clock: clock,
+      isExpanded: Binding(
+        get: { expandedClockId == clock.id },
+        set: { isExpanded in
+          withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            expandedClockId = isExpanded ? clock.id : nil
+          }
+        }
+      )
+    )
   }
 }
 

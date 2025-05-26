@@ -40,11 +40,7 @@ struct RunningSegmentView: View {
 
       VStack(spacing: 12) {
         Button {
-          // Continue running
-          if let clock = segment.clock {
-            globalEnvironment.startTimer(clock, segment: segment)
-          }
-          dismiss()
+          continueTracking()
         } label: {
           Label("Continue Tracking", systemImage: "play.circle")
             .frame(maxWidth: .infinity)
@@ -52,11 +48,7 @@ struct RunningSegmentView: View {
         .buttonStyle(.borderedProminent)
 
         Button {
-          // End tracking now
-          segment.isRunning = false
-          segment.endTime = Date()
-          globalEnvironment.persistData()
-          dismiss()
+          endTracking()
         } label: {
           Label("End Now", systemImage: "stop.circle")
             .frame(maxWidth: .infinity)
@@ -72,11 +64,7 @@ struct RunningSegmentView: View {
             .labelsHidden()
 
           Button {
-            // Set custom end time
-            segment.isRunning = false
-            segment.endTime = selectedEndTime
-            globalEnvironment.persistData()
-            dismiss()
+            setCustomEndTime()
           } label: {
             Label("Set Custom End Time", systemImage: "calendar")
               .frame(maxWidth: .infinity)
@@ -91,6 +79,27 @@ struct RunningSegmentView: View {
     .padding()
     .frame(width: 350)
     .interactiveDismissDisabled()
+  }
+
+  private func continueTracking() {
+    if let clock = segment.clock {
+      globalEnvironment.startTimer(clock, segment: segment)
+    }
+    dismiss()
+  }
+
+  private func endTracking() {
+    segment.isRunning = false
+    segment.endTime = Date()
+    globalEnvironment.persistData()
+    dismiss()
+  }
+
+  private func setCustomEndTime() {
+    segment.isRunning = false
+    segment.endTime = selectedEndTime
+    globalEnvironment.persistData()
+    dismiss()
   }
 }
 
