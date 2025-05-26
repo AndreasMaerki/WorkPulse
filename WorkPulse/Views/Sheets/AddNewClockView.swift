@@ -1,24 +1,28 @@
 import SwiftUI
 
-struct ClockFormView: View {
+struct AddNewClockView: View {
+  @Environment(\.dismiss) private var dismiss
   @Environment(GlobalEnvironment.self) private var viewModel
-  @Environment(\.dismiss) var dismiss
 
-  let clock: Clock?
-  let onSave: (String, Color, String?) -> Void
+  private let clock: Clock?
 
   @State private var name: String
   @State private var color: Color
   @State private var notes: String
 
-  init(clock: Clock? = nil, onSave: @escaping (String, Color, String?) -> Void) {
+  init(clock: Clock? = nil) {
     self.clock = clock
-    self.onSave = onSave
-
-    // Initialize state with clock values if editing, or defaults if creating
     _name = State(initialValue: clock?.name ?? "")
     _color = State(initialValue: clock?.color ?? .green)
     _notes = State(initialValue: clock?.notes ?? "")
+  }
+
+  private var isEditing: Bool {
+    clock != nil
+  }
+
+  private var isValid: Bool {
+    !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
   }
 
   var body: some View {
@@ -27,7 +31,7 @@ struct ClockFormView: View {
         Image(systemName: "plus.circle.fill")
           .font(.title)
           .foregroundStyle(color)
-        Text(clock == nil ? "Add new clock" : "Edit clock")
+        Text(isEditing ? "Edit clock" : "Add new clock")
           .font(.title2)
           .fontWeight(.semibold)
       }
@@ -72,17 +76,21 @@ struct ClockFormView: View {
         .tint(.red)
 
         Button {
-          onSave(name, color, notes.isEmpty ? nil : notes)
+          if isEditing, let clock {
+            viewModel.updateClock(clock, name: name, color: color, notes: notes.isEmpty ? nil : notes)
+          } else {
+            viewModel.addClock(name, color, note: notes.isEmpty ? nil : notes)
+          }
           dismiss()
         } label: {
           HStack {
-            Image(systemName: clock == nil ? "plus.circle.fill" : "checkmark.circle.fill")
-            Text(clock == nil ? "Add Clock" : "Save Changes")
+            Image(systemName: isEditing ? "checkmark.circle.fill" : "plus.circle.fill")
+            Text(isEditing ? "Save Changes" : "Add Clock")
           }
         }
         .buttonStyle(.borderedProminent)
         .tint(color)
-        .disabled(name.isEmpty)
+        .disabled(!isValid)
       }
       .frame(maxWidth: .infinity, alignment: .trailing)
     }
@@ -93,8 +101,6 @@ struct ClockFormView: View {
 }
 
 #Preview {
-  ClockFormView { name, color, notes in
-    print("Creating clock: \(name), \(color), \(notes ?? "no notes")")
-  }
-  .environment(GlobalEnvironment())
+  AddNewClockView()
+    .environment(GlobalEnvironment())
 }

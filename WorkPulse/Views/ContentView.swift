@@ -62,14 +62,10 @@ struct ContentView: View {
         }
       }
       .sheet(isPresented: $showSheet) {
-        ClockFormView { name, color, notes in
-          globalModel.addClock(name, color, note: notes)
-        }
+        AddNewClockView()
       }
       .sheet(item: $editingClock) { clock in
-        ClockFormView(clock: clock) { name, color, notes in
-          globalModel.updateClock(clock, name: name, color: color, notes: notes)
-        }
+        AddNewClockView(clock: clock)
       }
       .sheet(item: $runningSegment) { segment in
         RunningSegmentView(segment: segment)
