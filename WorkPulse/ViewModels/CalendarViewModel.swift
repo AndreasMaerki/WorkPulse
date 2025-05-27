@@ -2,7 +2,7 @@ import Foundation
 
 @Observable
 class CalendarViewModel {
-  var currentDate = Date()
+  var selectedDate = Date()
   var events: [CalendarEvent]
   private let calendar = Calendar.current
 
@@ -13,13 +13,13 @@ class CalendarViewModel {
   func eventsForCurrentDate() -> [CalendarEvent] {
     let calendar = Calendar.current
     return events.filter { event in
-      calendar.isDate(event.startTime, inSameDayAs: currentDate)
+      calendar.isDate(event.startTime, inSameDayAs: selectedDate)
     }
   }
 
   var startOfWeek: Date {
-    let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: currentDate)
-    return calendar.date(from: components) ?? currentDate
+    let components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: selectedDate)
+    return calendar.date(from: components) ?? selectedDate
   }
 
   var endOfWeek: Date {
@@ -27,18 +27,18 @@ class CalendarViewModel {
   }
 
   func goToNextDay() {
-    currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
+    selectedDate = calendar.date(byAdding: .day, value: 1, to: selectedDate)!
   }
 
   func goToPreviousDay() {
-    currentDate = calendar.date(byAdding: .day, value: -1, to: currentDate)!
+    selectedDate = calendar.date(byAdding: .day, value: -1, to: selectedDate)!
   }
 
   func goToNextWeek() {
-    currentDate = calendar.date(byAdding: .weekOfYear, value: 1, to: currentDate)!
+    selectedDate = calendar.date(byAdding: .weekOfYear, value: 1, to: selectedDate)!
   }
 
   func goToPreviousWeek() {
-    currentDate = calendar.date(byAdding: .weekOfYear, value: -1, to: currentDate)!
+    selectedDate = calendar.date(byAdding: .weekOfYear, value: -1, to: selectedDate)!
   }
 }

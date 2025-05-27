@@ -44,7 +44,7 @@ struct DayView: View {
       Button(action: { viewModel.goToPreviousDay() }) {
         Image(systemName: "chevron.left")
       }
-      Text(viewModel.currentDate, style: .date)
+      Text(viewModel.selectedDate, style: .date)
       Button(action: { viewModel.goToNextDay() }) {
         Image(systemName: "chevron.right")
       }
@@ -75,7 +75,7 @@ struct DayView: View {
         .frame(width: hourLabelWidth + 8)
 
       ZStack(alignment: .topLeading) {
-        ForEach(layoutProvider.eventsForDate(viewModel.currentDate, from: viewModel.events)) { event in
+        ForEach(layoutProvider.eventsForDate(viewModel.selectedDate, from: viewModel.events)) { event in
           let height = layoutProvider.calculateEventHeight(event)
           EventView(event: event)
             .frame(maxWidth: .infinity)

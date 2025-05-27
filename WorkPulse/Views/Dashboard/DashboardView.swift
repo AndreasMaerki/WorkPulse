@@ -4,6 +4,7 @@ struct DashboardView: View {
   @Environment(GlobalEnvironment.self) private var viewModel
   @State private var expandedClockId: UUID? = nil
   @State private var showCalendar = false
+  @State private var calendarViewModel: CalendarViewModel?
 
   private var calendarEvents: [CalendarEvent] {
     viewModel.clocks.flatMap { clock in
@@ -69,9 +70,16 @@ struct DashboardView: View {
       .padding()
     }
     .sheet(isPresented: $showCalendar) {
-      CalendarView()
-        .environment(CalendarViewModel(events: calendarEvents))
-        .frame(minWidth: 800, minHeight: 600)
+      if let calendarViewModel {
+        CalendarView()
+          .environment(calendarViewModel)
+          .frame(minWidth: 800, minHeight: 600)
+      }
+    }
+    .onChange(of: showCalendar) { _, isShowing in
+      if isShowing {
+        calendarViewModel = CalendarViewModel(events: calendarEvents)
+      }
     }
   }
 
