@@ -39,7 +39,7 @@ struct WeekView: View {
 
                   if index < 6 {
                     Rectangle()
-                      .fill(Color.gray.opacity(0.2))
+                      .fill(Theme.Colors.separator)
                       .frame(width: 1)
                       .frame(height: CGFloat(timeSlots.count) * slotHeight)
                   }
@@ -74,7 +74,7 @@ struct WeekView: View {
 
           if index < 6 {
             Rectangle()
-              .fill(Color.gray.opacity(0.2))
+              .fill(Theme.Colors.separator)
               .frame(width: 1)
               .frame(height: 12)
           }
@@ -117,7 +117,7 @@ struct WeekView: View {
         LazyVStack(spacing: 0) {
           ForEach(timeSlots, id: \.self) { _ in
             Rectangle()
-              .fill(Color.gray.opacity(0.2))
+              .fill(Theme.Colors.separator)
               .frame(width: columnWidth, height: 1)
               .frame(height: slotHeight)
           }

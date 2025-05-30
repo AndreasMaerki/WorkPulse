@@ -29,7 +29,7 @@ struct ClockRowView: View {
       .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
-    .background(Color.secondary.opacity(0.1).cornerRadius(4))
+    .background(Color.secondary.opacity(0.1).cornerRadius(Theme.CornerRadius.small))
   }
 
   private func toggleClock() {

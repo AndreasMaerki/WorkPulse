@@ -34,7 +34,7 @@ struct PieChartView: View {
             angularInset: 1.0
           )
           .foregroundStyle(data.color)
-          .cornerRadius(4)
+          .cornerRadius(Theme.CornerRadius.small)
           .annotation(position: .overlay) {
             if data.isSelected {
               Text(data.name)
@@ -43,7 +43,7 @@ struct PieChartView: View {
                 .foregroundStyle(.white)
                 .padding(4)
                 .background(Color.black.opacity(0.6))
-                .cornerRadius(4)
+                .cornerRadius(Theme.CornerRadius.small)
             }
           }
         }

@@ -38,8 +38,7 @@ struct DashboardView: View {
               .monospacedDigit()
           }
           .padding(20)
-          .background(Color.gray.opacity(0.1))
-          .cornerRadius(8)
+          .cardBackground()
 
           HStack(spacing: 16) {
             PieChartView()
@@ -62,8 +61,7 @@ struct DashboardView: View {
           }
         }
         .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(8)
+        .cardBackground()
 
         Spacer()
       }

@@ -71,12 +71,11 @@ struct RunningSegmentView: View {
           }
           .buttonStyle(.bordered)
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(8)
+        .padding(8)
+        .cardBackground()
       }
     }
-    .padding()
+    .padding(8)
     .frame(width: 350)
     .interactiveDismissDisabled()
   }

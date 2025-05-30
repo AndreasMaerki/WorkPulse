@@ -43,8 +43,7 @@ struct ExpandableDayView: View {
       }
     }
     .padding(8)
-    .background(Color.gray.opacity(0.05))
-    .cornerRadius(8)
+    .secondaryCardBackground()
     .sheet(isPresented: $showNoteEditor) {
       if let segment = selectedSegment {
         TimeSegmentNoteView(segment: segment)

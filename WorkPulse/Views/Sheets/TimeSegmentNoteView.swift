@@ -37,8 +37,7 @@ struct TimeSegmentNoteView: View {
         TextEditor(text: $note)
           .frame(height: 100)
           .padding(4)
-          .background(Color.gray.opacity(0.1))
-          .cornerRadius(8)
+          .cardBackground()
       }
 
       HStack {

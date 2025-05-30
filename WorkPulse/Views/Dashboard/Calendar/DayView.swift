@@ -58,7 +58,7 @@ struct DayView: View {
           Text("\(hour):00")
             .frame(width: hourLabelWidth, alignment: .leading)
           Rectangle()
-            .fill(Color.gray.opacity(0.2))
+            .fill(Theme.Colors.separator)
             .frame(maxWidth: .infinity)
             .frame(height: 1)
         }

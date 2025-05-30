@@ -108,9 +108,8 @@ struct SettingsView: View {
           .menuStyle(.borderlessButton)
           .fixedSize()
         }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(8)
+        .padding(8)
+        .cardBackground()
       }
     }
   }
@@ -124,10 +123,10 @@ struct SettingsView: View {
         HStack {
           Text("Minimum Time Segment Duration")
             .font(.subheadline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Theme.Colors.textSecondary)
 
           Image(systemName: "questionmark.circle")
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Theme.Colors.textSecondary)
             .frame(width: 24, height: 24)
             .help("Time segments shorter than this duration will be automatically removed when stopping the clock. This helps prevent accidental short segments from being recorded.")
         }
@@ -145,12 +144,11 @@ struct SettingsView: View {
 
           Text("\(Int(minimumDuration)) seconds")
             .monospacedDigit()
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Theme.Colors.textSecondary)
         }
       }
-      .padding()
-      .background(Color.gray.opacity(0.1))
-      .cornerRadius(8)
+      .padding(8)
+      .cardBackground()
     }
   }
 
