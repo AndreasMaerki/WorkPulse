@@ -2,6 +2,10 @@
 
 WorkPulse is a macOS time tracking application built with SwiftUI and SwiftData. It helps users track their time across different activities with a modern, intuitive interface.
 
+## Project Status
+
+This project is currently a work in progress. While the macOS version is functional, we are actively developing new features and improvements. A mobile client for iOS is planned for future development, which will allow users to track their time on the go and sync with their desktop data.
+
 ## Features
 
 - **Time Tracking**: Track time for multiple activities simultaneously
