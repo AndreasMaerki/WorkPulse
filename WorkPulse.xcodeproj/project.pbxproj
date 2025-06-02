@@ -27,6 +27,7 @@
 		C07156C42DC77FDA0094686F /* WorkPulse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkPulse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C07156D42DC77FDB0094686F /* WorkPulseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkPulseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C07156DE2DC77FDB0094686F /* WorkPulseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkPulseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0FC45152DEDBE80000CC190 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,6 +80,7 @@
 				C07156D72DC77FDB0094686F /* WorkPulseTests */,
 				C07156E12DC77FDB0094686F /* WorkPulseUITests */,
 				C07156C52DC77FDA0094686F /* Products */,
+				C0FC45152DEDBE80000CC190 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
