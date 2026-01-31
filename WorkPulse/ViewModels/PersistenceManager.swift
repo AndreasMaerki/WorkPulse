@@ -30,7 +30,7 @@ class PersistenceManager {
   }
 
   func persistData() {
-    updateActiveTimeSegmentEndTime()
+    updateActiveTimeSegmentEndTimeIfRunning()
     try? modelContext?.save()
     lastPersistenceTime = .init()
   }
@@ -43,7 +43,7 @@ class PersistenceManager {
     activeTimeSegment = timeSegment
   }
 
-  private func updateActiveTimeSegmentEndTime() {
+  func updateActiveTimeSegmentEndTimeIfRunning() {
     if let activeTimeSegment, activeTimeSegment.isRunning {
       activeTimeSegment.endTime = Date()
     }

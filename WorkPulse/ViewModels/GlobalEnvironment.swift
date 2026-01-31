@@ -169,9 +169,7 @@ class GlobalEnvironment {
       result + clock.elapsedTime()
     }
 
-    if let activeTimeSegment, activeTimeSegment.isRunning {
-      activeTimeSegment.endTime = Date()
-    }
+    persistenceManager.updateActiveTimeSegmentEndTimeIfRunning()
   }
 
   func totalTimeForName(_ name: String) -> TimeInterval {
