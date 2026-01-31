@@ -12,7 +12,7 @@ struct DashboardView: View {
         CalendarEvent(
           title: clock.name,
           startTime: segment.startTime,
-          endTime: segment.endTime ?? Date(),
+          endTime: segment.effectiveEndTime(refTime: Date()),
           color: clock.color
         )
       }

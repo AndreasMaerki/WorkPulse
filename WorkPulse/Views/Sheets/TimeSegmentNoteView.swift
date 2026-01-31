@@ -17,7 +17,7 @@ struct TimeSegmentNoteView: View {
   }
 
   private var isTimeValid: Bool {
-    selectedEndTime > selectedStartTime
+    segment.isValidRange(endTime: selectedEndTime)
   }
 
   var body: some View {

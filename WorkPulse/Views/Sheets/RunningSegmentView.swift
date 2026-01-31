@@ -101,7 +101,7 @@ struct RunningSegmentView: View {
   }
 
   private func setCustomEndTime() {
-    guard selectedEndTime > segment.startTime else {
+    guard segment.isValidRange(endTime: selectedEndTime) else {
       showInvalidTimeAlert = true
       return
     }

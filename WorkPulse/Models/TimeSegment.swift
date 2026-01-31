@@ -21,6 +21,14 @@ final class TimeSegment {
   }
 
   func elapsedTime(refTime: Date) -> TimeInterval {
-    max(0, (endTime ?? refTime).timeIntervalSince(startTime))
+    max(0, effectiveEndTime(refTime: refTime).timeIntervalSince(startTime))
+  }
+
+  func effectiveEndTime(refTime: Date) -> Date {
+    endTime ?? refTime
+  }
+
+  func isValidRange(endTime: Date) -> Bool {
+    endTime > startTime
   }
 }
