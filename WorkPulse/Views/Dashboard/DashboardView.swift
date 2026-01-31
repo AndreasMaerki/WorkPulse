@@ -9,12 +9,7 @@ struct DashboardView: View {
   private var calendarEvents: [CalendarEvent] {
     viewModel.clocks.flatMap { clock in
       clock.timeSegments.map { segment in
-        CalendarEvent(
-          title: clock.name,
-          startTime: segment.startTime,
-          endTime: segment.effectiveEndTime(refTime: Date()),
-          color: clock.color
-        )
+        CalendarEvent(segment: segment, clock: clock, refTime: Date())
       }
     }
   }

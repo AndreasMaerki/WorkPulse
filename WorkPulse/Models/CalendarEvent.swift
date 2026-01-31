@@ -6,6 +6,20 @@ struct CalendarEvent: Identifiable {
   let startTime: Date
   let endTime: Date
   let color: Color
+
+  init(title: String, startTime: Date, endTime: Date, color: Color) {
+    self.title = title
+    self.startTime = startTime
+    self.endTime = endTime
+    self.color = color
+  }
+
+  init(segment: TimeSegment, clock: Clock, refTime: Date) {
+    title = clock.name
+    startTime = segment.startTime
+    endTime = segment.effectiveEndTime(refTime: refTime)
+    color = clock.color
+  }
 }
 
 extension CalendarEvent {
