@@ -9,46 +9,51 @@ struct ContentView: View {
   @State var showSheet = false
   @State var runningSegment: TimeSegment?
   @State var editingClock: Clock?
+  @State private var selection: SidebarSelection? = .dashboard
+
+  enum SidebarSelection: Hashable {
+    case dashboard
+    case clock(UUID)
+    case settings
+  }
 
   var body: some View {
     NavigationSplitView {
-      List {
+      List(selection: $selection) {
         Section(header: Text("Dashboard")) {
-          NavigationLink {
-            DashboardView()
-          } label: {
+          NavigationLink(value: SidebarSelection.dashboard) {
             Text("Dashboard")
           }
         }
         Section(header: Text("Clocks")) {
           ForEach(globalModel.clocks) { clock in
-            ClockRowView(clock: clock)
-              .contextMenu {
-                Button {
-                  editingClock = clock
-                } label: {
-                  Label("Edit Clock", systemImage: "pencil")
-                }
+            NavigationLink(value: SidebarSelection.clock(clock.id)) {
+              ClockRowView(clock: clock, showsStartStop: true)
+            }
+            .contextMenu {
+              Button {
+                editingClock = clock
+              } label: {
+                Label("Edit Clock", systemImage: "pencil")
+              }
 
-                Button(role: .destructive) {
-                  globalModel.deleteClock(clock)
-                } label: {
-                  Label("Delete", systemImage: "trash")
-                }
+              Button(role: .destructive) {
+                globalModel.deleteClock(clock)
+              } label: {
+                Label("Delete", systemImage: "trash")
               }
-              .swipeActions(edge: .trailing) {
-                Button(role: .destructive) {
-                  globalModel.deleteClock(clock)
-                } label: {
-                  Label("Delete", systemImage: "trash")
-                }
+            }
+            .swipeActions(edge: .trailing) {
+              Button(role: .destructive) {
+                globalModel.deleteClock(clock)
+              } label: {
+                Label("Delete", systemImage: "trash")
               }
+            }
           }
         }
         Section(header: Text("More")) {
-          NavigationLink {
-            SettingsView()
-          } label: {
+          NavigationLink(value: SidebarSelection.settings) {
             settings
           }
         }
@@ -72,9 +77,25 @@ struct ContentView: View {
       }
       .onAppear {
         checkForRunningTimeSegments()
+        if selection == nil {
+          selection = .dashboard
+        }
       }
     } detail: {
-      DashboardView()
+      switch selection {
+      case .dashboard,
+           .none:
+        DashboardView()
+      case .settings:
+        SettingsView()
+      case let .clock(clockId):
+        if let clock = globalModel.clocks.first(where: { $0.id == clockId }) {
+          ClockDetailScreen(clock: clock)
+        } else {
+          Text("Clock not found")
+            .foregroundStyle(.secondary)
+        }
+      }
     }
   }
 

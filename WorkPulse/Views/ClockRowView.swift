@@ -3,11 +3,10 @@ import SwiftUI
 struct ClockRowView: View {
   @Environment(GlobalEnvironment.self) private var globalModel
   let clock: Clock
+  let showsStartStop: Bool
 
   var body: some View {
-    Button {
-      toggleClock()
-    } label: {
+    HStack(spacing: 12) {
       LabeledContent {
         Image(systemName: "hourglass")
           .font(.title2)
@@ -27,8 +26,20 @@ struct ClockRowView: View {
         }
       }
       .contentShape(Rectangle())
+
+      Spacer()
+
+      if showsStartStop {
+        Button {
+          toggleClock()
+        } label: {
+          Image(systemName: globalModel.activeClock?.id == clock.id ? "stop.circle.fill" : "play.circle.fill")
+            .foregroundStyle(globalModel.activeClock?.id == clock.id ? clock.color : .secondary)
+        }
+        .buttonStyle(.borderless)
+        .help(globalModel.activeClock?.id == clock.id ? "Stop clock" : "Start clock")
+      }
     }
-    .buttonStyle(.plain)
     .background(Color.secondary.opacity(0.1).cornerRadius(Theme.CornerRadius.small))
   }
 

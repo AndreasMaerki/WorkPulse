@@ -14,8 +14,22 @@ struct PieChartView: View {
   @State private var selectedTime: TimeInterval?
   @State private var clockData: [ClockTimeData] = []
 
+  let clocks: [Clock]?
+
+  init(clocks: [Clock]? = nil) {
+    self.clocks = clocks
+  }
+
+  private var sourceClocks: [Clock] {
+    clocks ?? viewModel.clocks
+  }
+
+  private var sourceClockIds: [UUID] {
+    sourceClocks.map(\.id)
+  }
+
   private func updateClockData() {
-    clockData = viewModel.clocks.map { clock in
+    clockData = sourceClocks.map { clock in
       ClockTimeData(
         name: clock.name,
         time: clock.elapsedTime(),
@@ -69,7 +83,7 @@ struct PieChartView: View {
     .onAppear {
       updateClockData()
     }
-    .onChange(of: viewModel.clocks) { _, _ in
+    .onChange(of: sourceClockIds) { _, _ in
       updateClockData()
     }
   }

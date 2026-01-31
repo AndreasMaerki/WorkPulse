@@ -122,7 +122,7 @@ struct SettingsView: View {
       VStack(alignment: .leading, spacing: 8) {
         HStack {
           Text("Minimum Time Segment Duration")
-            .font(.subheadline)
+            .font(.callout)
             .foregroundStyle(Theme.Colors.textSecondary)
 
           Image(systemName: "questionmark.circle")

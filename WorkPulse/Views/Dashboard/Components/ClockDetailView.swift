@@ -20,7 +20,7 @@ struct ClockDetailView: View {
           expandedDay: $expandedDay
         )
         .padding(.top, 8)
-        .transition(.move(edge: .top).combined(with: .opacity))
+        .transition(.identity)
       }
     }
   }

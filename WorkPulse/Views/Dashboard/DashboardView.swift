@@ -94,7 +94,7 @@ struct DashboardView: View {
       isExpanded: Binding(
         get: { expandedClockId == clock.id },
         set: { isExpanded in
-          withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+          withAnimation(.easeInOut(duration: 0.2)) {
             expandedClockId = isExpanded ? clock.id : nil
           }
         }

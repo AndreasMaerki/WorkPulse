@@ -32,3 +32,21 @@ final class TimeSegment {
     endTime > startTime
   }
 }
+
+extension TimeSegment {
+  static func mockSegments(for clock: Clock) -> [TimeSegment] {
+    [
+      TimeSegment(
+        startTime: Date().addingTimeInterval(-3 * 60 * 60),
+        endTime: Date().addingTimeInterval(-2 * 60 * 60),
+        clock: clock,
+        note: "Architecture review"
+      ),
+      TimeSegment(
+        startTime: Date().addingTimeInterval(-90 * 60),
+        endTime: Date().addingTimeInterval(-30 * 60),
+        clock: clock
+      ),
+    ]
+  }
+}

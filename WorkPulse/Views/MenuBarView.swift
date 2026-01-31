@@ -20,10 +20,10 @@ struct MenuBarView: View {
   private var totalTime: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text("Total Time")
-        .font(.caption)
+        .font(.callout)
         .foregroundStyle(.secondary)
       Text(globalEnvironment.elapsedTime.formattedHHMMSS())
-        .font(.system(size: 16, weight: .medium))
+        .font(.callout.weight(.medium))
         .monospacedDigit()
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -33,21 +33,24 @@ struct MenuBarView: View {
   private var clockSection: some View {
     VStack(spacing: 8) {
       ForEach(globalEnvironment.clocks) { clock in
+        let activeSegment = activeSegmentForClock(clock)
         HStack {
           Circle()
             .fill(clock.color)
             .frame(width: 8, height: 8)
           Text(clock.name)
-            .font(.system(size: 12))
+            .font(.callout)
           Spacer()
-          Text(clock.elapsedTime().formattedHHMMSS())
-            .font(.system(size: 12, weight: .medium))
-            .monospacedDigit()
+          if let activeSegment {
+            Text(activeSegment.elapsedTime(refTime: activeSegment.endTime ?? Date()).formattedHHMMSS())
+              .font(.callout.weight(.medium))
+              .monospacedDigit()
+          }
           Button {
             toggleClock(clock)
           } label: {
             Image(systemName: globalEnvironment.activeClock?.id == clock.id ? "stop.fill" : "play.fill")
-              .font(.system(size: 10))
+              .font(.callout)
               .foregroundStyle(globalEnvironment.activeClock?.id == clock.id ? .red : .green)
           }
           .buttonStyle(.plain)
@@ -78,6 +81,17 @@ struct MenuBarView: View {
     } else {
       globalEnvironment.startTimer(clock)
     }
+  }
+
+  private func activeSegmentForClock(_ clock: Clock) -> TimeSegment? {
+    _ = globalEnvironment.elapsedTime
+    guard globalEnvironment.activeClock?.id == clock.id,
+          let segment = globalEnvironment.activeTimeSegment,
+          segment.clock?.id == clock.id
+    else {
+      return nil
+    }
+    return segment
   }
 
   private func openWorkPulse() {

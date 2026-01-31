@@ -8,6 +8,7 @@ struct ExpandableDayView: View {
   @Environment(GlobalEnvironment.self) private var viewModel
   @State private var selectedSegment: TimeSegment?
   @State private var showNoteEditor = false
+  @State private var listContentHeight: CGFloat = 0
 
   private var totalDayTime: TimeInterval {
     segments.reduce(0) { result, segment in
@@ -16,15 +17,9 @@ struct ExpandableDayView: View {
   }
 
   private var listHeight: CGFloat {
-    let baseHeight: CGFloat = 24 // Base height for each segment
-    let noteHeight: CGFloat = 32 // Extra height for segments with notes
     let maxHeight: CGFloat = 300 // Maximum height of the list
 
-    let totalHeight = segments.reduce(0) { result, segment in
-      result + baseHeight + (segment.note != nil ? noteHeight : 0)
-    }
-
-    return min(totalHeight, maxHeight)
+    return min(listContentHeight, maxHeight)
   }
 
   var body: some View {
@@ -32,18 +27,40 @@ struct ExpandableDayView: View {
       dayOpeningButton
 
       if isExpanded {
-        List {
-          ForEach(segments) { segment in
-            timeSegment(segment)
+        ScrollView {
+          LazyVStack(spacing: 0) {
+            ForEach(segments) { segment in
+              timeSegment(segment)
+            }
           }
+          .background(
+            GeometryReader { proxy in
+              Color.clear
+                .onAppear {
+                  withAnimation(.easeInOut(duration: 0.2)) {
+                    listContentHeight = proxy.size.height
+                  }
+                }
+                .onChange(of: proxy.size.height) { _, newValue in
+                  withAnimation(.easeInOut(duration: 0.2)) {
+                    listContentHeight = newValue
+                  }
+                }
+            }
+          )
         }
-        .scrollContentBackground(.hidden)
-        .listStyle(.plain)
         .frame(height: listHeight)
       }
     }
     .padding(8)
     .secondaryCardBackground()
+    .onChange(of: isExpanded) { _, expanded in
+      if !expanded {
+        withAnimation(.easeInOut(duration: 0.2)) {
+          listContentHeight = 0
+        }
+      }
+    }
     .sheet(isPresented: $showNoteEditor) {
       if let segment = selectedSegment {
         TimeSegmentNoteView(segment: segment)
@@ -55,11 +72,11 @@ struct ExpandableDayView: View {
     Button(action: { isExpanded.toggle() }) {
       HStack {
         Text(dayName)
-          .font(.subheadline)
+          .font(.callout)
           .foregroundStyle(.secondary)
         Spacer()
         Text(totalDayTime.formattedHHMMSS())
-          .font(.subheadline)
+          .font(.callout)
           .monospacedDigit()
           .foregroundStyle(.primary)
         Image(systemName: "chevron.right")
@@ -82,23 +99,25 @@ struct ExpandableDayView: View {
         Text((segment.isRunning ? "Running" : segment.endTime?.shortTimeString ?? ""))
           .foregroundStyle(.secondary)
         Spacer()
+
+        editButton(segment)
+
         Text(segment.elapsedTime(refTime: Date()).formattedHHMMSS())
           .monospacedDigit()
       }
-      .font(.footnote)
+      .font(.callout)
 
       if let note = segment.note {
         Text(note)
-          .font(.caption)
+          .font(.footnote)
           .foregroundStyle(.secondary)
           .lineLimit(2)
           .padding(.leading)
       }
     }
-    .listRowInsets(EdgeInsets(top: 4, leading: 24, bottom: 4, trailing: 8))
-    .onTapGesture(count: 2) {
-      handleSegmentDoubleTap(segment)
-    }
+    .padding(.vertical, 4)
+    .padding(.leading, 24)
+    .padding(.trailing, 8)
     .swipeActions(edge: .trailing) {
       Button(role: .destructive) {
         deleteTimeSegment(segment)
@@ -108,7 +127,21 @@ struct ExpandableDayView: View {
     }
   }
 
-  private func handleSegmentDoubleTap(_ segment: TimeSegment) {
+  private func editButton(_ segment: TimeSegment) -> some View {
+    Button {
+      handleSegmentEdit(segment)
+    } label: {
+      Image(systemName: "pencil")
+        .bold()
+        .font(.body)
+    }
+    .buttonStyle(.borderedProminent)
+    .controlSize(.large)
+    .tint(.accentColor)
+    .help("Edit note")
+  }
+
+  private func handleSegmentEdit(_ segment: TimeSegment) {
     selectedSegment = segment
     showNoteEditor = true
   }
@@ -118,4 +151,17 @@ struct ExpandableDayView: View {
       viewModel.deleteTimeSegment(segment, from: clock)
     }
   }
+}
+
+#Preview {
+  ExpandableDayView(
+    day: Calendar.current.startOfDay(for: Date()),
+    dayName: Date().formattedForTimeSegment(),
+    segments: TimeSegment.mockSegments(
+      for: Clock(name: "Deep Work", color: .blue, notes: "Focus blocks")
+    ),
+    isExpanded: .constant(true)
+  )
+  .environment(GlobalEnvironment())
+  .padding()
 }

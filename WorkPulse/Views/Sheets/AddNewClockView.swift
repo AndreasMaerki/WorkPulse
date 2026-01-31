@@ -39,7 +39,7 @@ struct AddNewClockView: View {
 
       VStack(alignment: .leading) {
         Text("Clock name")
-          .font(.subheadline)
+          .font(.callout)
           .foregroundStyle(.secondary)
 
         TextField("Enter a name for your clock", text: $name)
@@ -49,7 +49,7 @@ struct AddNewClockView: View {
 
       VStack(alignment: .leading) {
         Text("Color")
-          .font(.subheadline)
+          .font(.callout)
           .foregroundStyle(.secondary)
 
         ColorPicker("", selection: $color)
@@ -59,7 +59,7 @@ struct AddNewClockView: View {
 
       VStack(alignment: .leading) {
         Text("Notes (optional)")
-          .font(.subheadline)
+          .font(.callout)
           .foregroundStyle(.secondary)
 
         TextEditor(text: $notes)

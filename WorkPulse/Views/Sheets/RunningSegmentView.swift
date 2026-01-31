@@ -37,7 +37,7 @@ struct RunningSegmentView: View {
       Divider()
 
       Text("What would you like to do?")
-        .font(.subheadline)
+        .font(.callout)
 
       VStack(spacing: 12) {
         Button {
@@ -58,7 +58,7 @@ struct RunningSegmentView: View {
 
         VStack(alignment: .leading, spacing: 4) {
           Text("Edit End Time (Defaults to seen last update):")
-            .font(.subheadline)
+            .font(.callout)
 
           DatePicker("", selection: $selectedEndTime)
             .datePickerStyle(.compact)

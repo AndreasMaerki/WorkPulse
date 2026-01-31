@@ -19,7 +19,7 @@ struct EventView: View {
         if geometry.size.height >= 40 {
           VStack(alignment: .leading, spacing: 2) {
             Text(event.title)
-              .font(.caption)
+              .font(.footnote)
               .lineLimit(1)
               .foregroundColor(.white)
 
@@ -29,7 +29,7 @@ struct EventView: View {
                 Text("-")
                 Text(timeString(from: event.endTime))
               }
-              .font(.caption2)
+              .font(.footnote)
               .foregroundColor(.white.opacity(0.9))
             }
           }

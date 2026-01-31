@@ -31,7 +31,7 @@ struct TimeSegmentNoteView: View {
 
       VStack(alignment: .leading, spacing: 8) {
         Text("Note")
-          .font(.subheadline)
+          .font(.callout)
           .foregroundStyle(.secondary)
 
         TextEditor(text: $note)
@@ -67,7 +67,7 @@ struct TimeSegmentNoteView: View {
   private var startTimePicker: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("Start Time")
-        .font(.subheadline)
+        .font(.callout)
         .foregroundStyle(.secondary)
 
       DatePicker("", selection: $selectedStartTime)
@@ -79,7 +79,7 @@ struct TimeSegmentNoteView: View {
   private var endTimePicker: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text("End Time")
-        .font(.subheadline)
+        .font(.callout)
         .foregroundStyle(.secondary)
 
       DatePicker("", selection: $selectedEndTime)

@@ -7,7 +7,11 @@ struct ClockHeaderView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Button(action: { isExpanded.toggle() }) {
+      Button(action: {
+        withAnimation(.easeInOut(duration: 0.2)) {
+          isExpanded.toggle()
+        }
+      }) {
         HStack {
           Circle()
             .fill(clock.color)
@@ -29,7 +33,7 @@ struct ClockHeaderView: View {
 
       if isExpanded, let notes = clock.notes {
         Text(notes)
-          .font(.caption)
+          .font(.footnote)
           .foregroundStyle(.secondary)
           .lineLimit(2)
           .padding(.leading, 24)

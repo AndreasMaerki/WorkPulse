@@ -14,7 +14,7 @@ struct ExpandableDayListView: View {
           isExpanded: Binding(
             get: { expandedDay == day },
             set: { isExpanded in
-              withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+              withAnimation(.easeInOut(duration: 0.2)) {
                 expandedDay = isExpanded ? day : nil
               }
             }
