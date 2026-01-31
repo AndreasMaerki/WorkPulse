@@ -11,8 +11,7 @@ class CalendarViewModel {
   }
 
   func eventsForCurrentDate() -> [CalendarEvent] {
-    let calendar = Calendar.current
-    return events.filter { event in
+    events.filter { event in
       calendar.isDate(event.startTime, inSameDayAs: selectedDate)
     }
   }
@@ -27,18 +26,18 @@ class CalendarViewModel {
   }
 
   func goToNextDay() {
-    selectedDate = calendar.date(byAdding: .day, value: 1, to: selectedDate)!
+    selectedDate = calendar.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
   }
 
   func goToPreviousDay() {
-    selectedDate = calendar.date(byAdding: .day, value: -1, to: selectedDate)!
+    selectedDate = calendar.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
   }
 
   func goToNextWeek() {
-    selectedDate = calendar.date(byAdding: .weekOfYear, value: 1, to: selectedDate)!
+    selectedDate = calendar.date(byAdding: .weekOfYear, value: 1, to: selectedDate) ?? selectedDate
   }
 
   func goToPreviousWeek() {
-    selectedDate = calendar.date(byAdding: .weekOfYear, value: -1, to: selectedDate)!
+    selectedDate = calendar.date(byAdding: .weekOfYear, value: -1, to: selectedDate) ?? selectedDate
   }
 }

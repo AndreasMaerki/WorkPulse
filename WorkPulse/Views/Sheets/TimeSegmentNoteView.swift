@@ -52,6 +52,7 @@ struct TimeSegmentNoteView: View {
           saveAction()
         }
         .buttonStyle(.borderedProminent)
+        .disabled(!isTimeValid)
       }
     }
     .padding()

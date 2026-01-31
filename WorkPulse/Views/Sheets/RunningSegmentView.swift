@@ -5,6 +5,7 @@ struct RunningSegmentView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(GlobalEnvironment.self) private var globalEnvironment
   @State private var selectedEndTime = Date()
+  @State private var showInvalidTimeAlert = false
 
   init(segment: TimeSegment) {
     self.segment = segment
@@ -78,6 +79,11 @@ struct RunningSegmentView: View {
     .padding(8)
     .frame(width: 350)
     .interactiveDismissDisabled()
+    .alert("Invalid Time Range", isPresented: $showInvalidTimeAlert) {
+      Button("OK", role: .cancel) {}
+    } message: {
+      Text("End time must be after start time.")
+    }
   }
 
   private func continueTracking() {
@@ -95,6 +101,10 @@ struct RunningSegmentView: View {
   }
 
   private func setCustomEndTime() {
+    guard selectedEndTime > segment.startTime else {
+      showInvalidTimeAlert = true
+      return
+    }
     segment.isRunning = false
     segment.endTime = selectedEndTime
     globalEnvironment.persistData()

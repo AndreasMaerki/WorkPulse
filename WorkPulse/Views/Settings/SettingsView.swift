@@ -235,12 +235,12 @@ struct ClockCSVDocument: FileDocument {
     }
   }
 
-  init(configuration: ReadConfiguration) throws {
+  init(configuration _: ReadConfiguration) throws {
     clockName = "Unknown Clock"
     segments = []
   }
 
-  func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+  func fileWrapper(configuration _: WriteConfiguration) throws -> FileWrapper {
     let header = "Clock Name,Start Time,End Time,Note\n"
     let rows = segments.map { segment in
       let endTime = segment.endTime?.formatted(date: .numeric, time: .standard) ?? "Running"
@@ -248,7 +248,10 @@ struct ClockCSVDocument: FileDocument {
       return "\(segment.clockName),\(segment.startTime.formatted(date: .numeric, time: .standard)),\(endTime),\(note)"
     }
     let content = header + rows.joined(separator: "\n")
-    return FileWrapper(regularFileWithContents: content.data(using: .utf8)!)
+    guard let data = content.data(using: .utf8) else {
+      throw CocoaError(.fileWriteUnknown)
+    }
+    return FileWrapper(regularFileWithContents: data)
   }
 }
 

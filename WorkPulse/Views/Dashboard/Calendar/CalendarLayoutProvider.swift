@@ -20,7 +20,7 @@ struct CalendarLayoutProvider {
   func calculateEventHeight(_ event: CalendarEvent) -> CGFloat {
     let durationInSeconds = event.endTime.timeIntervalSince(event.startTime)
     let durationInHours = durationInSeconds / 3600.0
-    return CGFloat(durationInHours) * slotHeight
+    return max(0, CGFloat(durationInHours) * slotHeight)
   }
 
   func eventsForDate(_ date: Date, from events: [CalendarEvent]) -> [CalendarEvent] {

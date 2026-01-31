@@ -44,7 +44,7 @@ class PersistenceManager {
   }
 
   private func updateActiveTimeSegmentEndTime() {
-    if let activeTimeSegment {
+    if let activeTimeSegment, activeTimeSegment.isRunning {
       activeTimeSegment.endTime = Date()
     }
   }

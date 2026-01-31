@@ -1,6 +1,6 @@
 import Foundation
 import SwiftData
-import SwiftUICore
+import SwiftUI
 
 @Model
 final class TimeSegment {
@@ -21,6 +21,6 @@ final class TimeSegment {
   }
 
   func elapsedTime(refTime: Date) -> TimeInterval {
-    (endTime ?? refTime).timeIntervalSince(startTime)
+    max(0, (endTime ?? refTime).timeIntervalSince(startTime))
   }
 }

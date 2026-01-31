@@ -2,7 +2,7 @@ import _SwiftData_SwiftUI
 import Foundation
 import Observation
 import SwiftData
-import SwiftUICore
+import SwiftUI
 
 @Observable
 @MainActor
@@ -169,7 +169,7 @@ class GlobalEnvironment {
       result + clock.elapsedTime()
     }
 
-    if let activeTimeSegment {
+    if let activeTimeSegment, activeTimeSegment.isRunning {
       activeTimeSegment.endTime = Date()
     }
   }

@@ -1,5 +1,5 @@
 import AppKit
-import SwiftUICore
+import SwiftUI
 
 extension Color {
   var components: (red: Double, green: Double, blue: Double, opacity: Double)? {
