@@ -41,13 +41,11 @@ struct DayView: View {
 
   private var navigationHeader: some View {
     HStack {
-      Button(action: { viewModel.goToPreviousDay() }) {
-        Image(systemName: "chevron.left")
-      }
+      Button("Previous day", systemImage: "chevron.left", action: viewModel.goToPreviousDay)
+        .labelStyle(.iconOnly)
       Text(viewModel.selectedDate, style: .date)
-      Button(action: { viewModel.goToNextDay() }) {
-        Image(systemName: "chevron.right")
-      }
+      Button("Next day", systemImage: "chevron.right", action: viewModel.goToNextDay)
+        .labelStyle(.iconOnly)
     }
   }
 

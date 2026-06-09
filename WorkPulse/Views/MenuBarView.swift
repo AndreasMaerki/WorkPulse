@@ -46,13 +46,16 @@ struct MenuBarView: View {
               .font(.callout.weight(.medium))
               .monospacedDigit()
           }
-          Button {
+          let isActive = globalEnvironment.activeClock?.id == clock.id
+          Button(
+            isActive ? "Stop \(clock.name)" : "Start \(clock.name)",
+            systemImage: isActive ? "stop.fill" : "play.fill"
+          ) {
             toggleClock(clock)
-          } label: {
-            Image(systemName: globalEnvironment.activeClock?.id == clock.id ? "stop.fill" : "play.fill")
-              .font(.callout)
-              .foregroundStyle(globalEnvironment.activeClock?.id == clock.id ? .red : .green)
           }
+          .labelStyle(.iconOnly)
+          .font(.callout)
+          .foregroundStyle(isActive ? .red : .green)
           .buttonStyle(.plain)
         }
         .padding(.horizontal, 12)

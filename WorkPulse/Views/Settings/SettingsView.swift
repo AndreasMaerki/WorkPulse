@@ -82,7 +82,7 @@ struct SettingsView: View {
           Text(clock.elapsedTime().formattedHHMMSS())
             .monospacedDigit()
 
-          Menu {
+          Menu("Clock actions", systemImage: "ellipsis.circle") {
             Button(role: .destructive) {
               showDeleteConfirmation(for: clock)
             } label: {
@@ -100,11 +100,9 @@ struct SettingsView: View {
             } label: {
               Label("Export CSV", systemImage: "square.and.arrow.up")
             }
-          } label: {
-            Image(systemName: "ellipsis.circle")
-              .foregroundStyle(.secondary)
-              .frame(width: 24, height: 24)
           }
+          .labelStyle(.iconOnly)
+          .foregroundStyle(.secondary)
           .menuStyle(.borderlessButton)
           .fixedSize()
         }

@@ -1,9 +1,3 @@
-//
-//  EventView.swift
-//  CalendarTest
-//
-//  Created by Andreas Maerki on 10.05.2025.
-//
 import SwiftUI
 
 struct EventView: View {
@@ -21,7 +15,7 @@ struct EventView: View {
             Text(event.title)
               .font(.footnote)
               .lineLimit(1)
-              .foregroundColor(.white)
+              .foregroundStyle(.white)
 
             if geometry.size.height >= 55 {
               HStack {
@@ -30,7 +24,7 @@ struct EventView: View {
                 Text(timeString(from: event.endTime))
               }
               .font(.footnote)
-              .foregroundColor(.white.opacity(0.9))
+              .foregroundStyle(.white.opacity(0.9))
             }
           }
           .padding(4)

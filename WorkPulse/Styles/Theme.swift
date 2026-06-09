@@ -21,7 +21,7 @@ struct CardBackgroundStyle: ViewModifier {
   func body(content: Content) -> some View {
     content
       .background(Theme.Colors.background)
-      .cornerRadius(Theme.CornerRadius.medium)
+      .clipShape(.rect(cornerRadius: Theme.CornerRadius.medium))
   }
 }
 
@@ -29,7 +29,7 @@ struct SecondaryCardBackgroundStyle: ViewModifier {
   func body(content: Content) -> some View {
     content
       .background(Theme.Colors.secondaryBackground)
-      .cornerRadius(Theme.CornerRadius.medium)
+      .clipShape(.rect(cornerRadius: Theme.CornerRadius.medium))
   }
 }
 
@@ -37,7 +37,7 @@ struct OverlayStyle: ViewModifier {
   func body(content: Content) -> some View {
     content
       .background(Theme.Colors.overlay)
-      .cornerRadius(Theme.CornerRadius.small)
+      .clipShape(.rect(cornerRadius: Theme.CornerRadius.small))
   }
 }
 

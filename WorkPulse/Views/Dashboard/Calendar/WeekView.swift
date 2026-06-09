@@ -87,13 +87,11 @@ struct WeekView: View {
 
   private var navigationHeader: some View {
     HStack {
-      Button(action: { viewModel.goToPreviousWeek() }) {
-        Image(systemName: "chevron.left")
-      }
+      Button("Previous week", systemImage: "chevron.left", action: viewModel.goToPreviousWeek)
+        .labelStyle(.iconOnly)
       Text("\(viewModel.startOfWeek, format: .dateTime.month().day()) - \(viewModel.endOfWeek, format: .dateTime.month().day())")
-      Button(action: { viewModel.goToNextWeek() }) {
-        Image(systemName: "chevron.right")
-      }
+      Button("Next week", systemImage: "chevron.right", action: viewModel.goToNextWeek)
+        .labelStyle(.iconOnly)
     }
   }
 

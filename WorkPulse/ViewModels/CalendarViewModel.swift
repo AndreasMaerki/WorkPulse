@@ -1,6 +1,7 @@
 import Foundation
 
 @Observable
+@MainActor
 class CalendarViewModel {
   var selectedDate = Date()
   var events: [CalendarEvent]

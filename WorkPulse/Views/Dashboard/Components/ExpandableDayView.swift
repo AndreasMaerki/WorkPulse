@@ -128,13 +128,12 @@ struct ExpandableDayView: View {
   }
 
   private func editButton(_ segment: TimeSegment) -> some View {
-    Button {
+    Button("Edit note", systemImage: "pencil") {
       handleSegmentEdit(segment)
-    } label: {
-      Image(systemName: "pencil")
-        .bold()
-        .font(.body)
     }
+    .labelStyle(.iconOnly)
+    .bold()
+    .font(.body)
     .buttonStyle(.borderedProminent)
     .controlSize(.large)
     .tint(.accentColor)

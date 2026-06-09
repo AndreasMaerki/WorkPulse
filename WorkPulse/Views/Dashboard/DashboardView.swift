@@ -77,13 +77,12 @@ struct DashboardView: View {
   }
 
   private var calendarButton: some View {
-    Button {
+    Button("View calendar", systemImage: "calendar") {
       showCalendar = true
-    } label: {
-      Image(systemName: "calendar")
-        .font(.title2)
-        .foregroundStyle(.secondary)
     }
+    .labelStyle(.iconOnly)
+    .font(.title2)
+    .foregroundStyle(.secondary)
     .buttonStyle(.plain)
     .help("View time segments in calendar")
   }

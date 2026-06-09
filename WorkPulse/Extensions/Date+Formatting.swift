@@ -8,42 +8,27 @@ extension Date {
     } else if calendar.isDateInYesterday(self) {
       return "Yesterday"
     } else {
-      let formatter = DateFormatter()
-      formatter.dateStyle = .medium
-      formatter.timeStyle = .none
-      return formatter.string(from: self)
+      return formatted(date: .abbreviated, time: .omitted)
     }
   }
 
   var monthYearString: String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "LLLL yyyy"
-    return formatter.string(from: self)
+    formatted(.dateTime.month(.wide).year())
   }
 
   var todayString: String {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .full
-    return formatter.string(from: self)
+    formatted(date: .complete, time: .omitted)
   }
 
   var shortTimeString: String {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .none
-    formatter.timeStyle = .short
-    return formatter.string(from: self)
+    formatted(date: .omitted, time: .shortened)
   }
 
   var shortDateTimeString: String {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .short
-    return formatter.string(from: self)
+    formatted(date: .numeric, time: .shortened)
   }
 
   var hourMinuteString: String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "HH:mm"
-    return formatter.string(from: self)
+    formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))
   }
 }

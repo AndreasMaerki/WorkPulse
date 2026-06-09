@@ -14,13 +14,12 @@ struct CalendarView: View {
   var body: some View {
     VStack(spacing: 0) {
       HStack {
-        Button(action: { dismiss() }) {
-          Image(systemName: "xmark.circle.fill")
-            .foregroundStyle(.secondary)
-            .font(.title2)
-        }
-        .buttonStyle(.plain)
-        .padding()
+        Button("Close", systemImage: "xmark.circle.fill") { dismiss() }
+          .labelStyle(.iconOnly)
+          .foregroundStyle(.secondary)
+          .font(.title2)
+          .buttonStyle(.plain)
+          .padding()
 
         Spacer()
       }

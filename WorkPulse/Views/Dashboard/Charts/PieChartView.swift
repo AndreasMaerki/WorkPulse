@@ -56,8 +56,7 @@ struct PieChartView: View {
                 .bold()
                 .foregroundStyle(.white)
                 .padding(4)
-                .background(Color.black.opacity(0.6))
-                .cornerRadius(Theme.CornerRadius.small)
+                .background(Color.black.opacity(0.6), in: .rect(cornerRadius: Theme.CornerRadius.small))
             }
           }
         }

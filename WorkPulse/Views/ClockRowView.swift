@@ -40,7 +40,7 @@ struct ClockRowView: View {
         .help(globalModel.activeClock?.id == clock.id ? "Stop clock" : "Start clock")
       }
     }
-    .background(Color.secondary.opacity(0.1).cornerRadius(Theme.CornerRadius.small))
+    .background(Color.secondary.opacity(0.1), in: .rect(cornerRadius: Theme.CornerRadius.small))
   }
 
   private func toggleClock() {

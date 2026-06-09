@@ -4,11 +4,10 @@ import SwiftUI
 struct ContentView: View {
   @Environment(\.modelContext) private var modelContext
   @Environment(GlobalEnvironment.self) private var globalModel
-  @Query private var items: [Item]
 
-  @State var showSheet = false
-  @State var runningSegment: TimeSegment?
-  @State var editingClock: Clock?
+  @State private var showSheet = false
+  @State private var runningSegment: TimeSegment?
+  @State private var editingClock: Clock?
   @State private var selection: SidebarSelection? = .dashboard
 
   enum SidebarSelection: Hashable {
@@ -61,9 +60,7 @@ struct ContentView: View {
       .navigationSplitViewColumnWidth(min: 180, ideal: 200)
       .toolbar {
         ToolbarItem {
-          Button(action: { showSheet.toggle() }) {
-            Label("Add Item", systemImage: "plus")
-          }
+          Button("Add Clock", systemImage: "plus") { showSheet.toggle() }
         }
       }
       .sheet(isPresented: $showSheet) {
@@ -116,6 +113,5 @@ struct ContentView: View {
 
 #Preview {
   ContentView()
-    .modelContainer(for: Item.self, inMemory: true)
     .environment(GlobalEnvironment())
 }
